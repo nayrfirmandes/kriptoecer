@@ -1,21 +1,22 @@
 # Deploy ke Vercel
 
-## Langkah-langkah
+## Metode 1: Via GitHub (Recommended)
 
-### 1. Install Vercel CLI
+### 1. Push ke GitHub
 ```bash
-npm i -g vercel
+git add .
+git commit -m "Deploy to Vercel"
+git push origin main
 ```
 
-### 2. Login ke Vercel
-```bash
-vercel login
-```
+### 2. Import di Vercel
+1. Buka https://vercel.com/new
+2. Pilih "Import Git Repository"
+3. Pilih repo GitHub kamu
+4. Klik "Import"
 
-### 3. Setup Environment Variables di Vercel
-Buka https://vercel.com → Project Settings → Environment Variables
-
-Tambahkan:
+### 3. Setup Environment Variables
+Di halaman configure project, tambahkan Environment Variables:
 - `TELEGRAM_BOT_TOKEN` - Token dari @BotFather
 - `BOT_DATABASE` - PostgreSQL connection string (NeonSQL)
 - `OXAPAY_MERCHANT_API_KEY` - OxaPay merchant API key
@@ -25,9 +26,7 @@ Tambahkan:
 - `ADMIN_TELEGRAM_IDS` - Comma-separated admin Telegram IDs
 
 ### 4. Deploy
-```bash
-vercel --prod
-```
+Klik "Deploy" dan tunggu selesai.
 
 ### 5. Set Telegram Webhook
 Setelah deploy, buka URL:
@@ -35,9 +34,38 @@ Setelah deploy, buka URL:
 https://your-project.vercel.app/api/set-webhook
 ```
 
-Ini akan otomatis set webhook Telegram ke Vercel.
+### 6. Auto Deploy
+Setiap push ke GitHub akan otomatis deploy ke Vercel!
 
-### 6. Update OxaPay Webhook URL
+---
+
+## Metode 2: Via Vercel CLI
+
+### 1. Install Vercel CLI
+```bash
+npm i -g vercel
+```
+
+### 2. Login & Deploy
+```bash
+vercel login
+vercel --prod
+```
+
+### 3. Setup Environment Variables
+Buka https://vercel.com → Project Settings → Environment Variables
+
+---
+
+## Setelah Deploy
+
+### Set Telegram Webhook
+Buka URL ini untuk set webhook:
+```
+https://your-project.vercel.app/api/set-webhook
+```
+
+### Update OxaPay Webhook URL
 Di dashboard OxaPay, set webhook URL ke:
 ```
 https://your-project.vercel.app/webhook/oxapay
