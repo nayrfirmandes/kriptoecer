@@ -5,6 +5,18 @@ import random
 
 WIB = timezone(timedelta(hours=7))
 
+QUOTES = [
+    "Transaksi cepat, aman, terpercaya.",
+    "Partner crypto terbaik untuk Anda.",
+    "Beli, jual, untung bersama kami.",
+    "Investasi crypto mudah dan aman.",
+]
+
+
+def get_quote() -> str:
+    return random.choice(QUOTES)
+
+
 def get_wib_greeting() -> str:
     now = datetime.now(WIB)
     hour = now.hour
@@ -77,13 +89,17 @@ Dengan menggunakan layanan ini, Anda menyetujui:
 
 def format_main_menu(balance: Decimal, name: str, telegram_id: int) -> str:
     greeting = get_wib_greeting()
+    quote = get_quote()
     
     return """{greeting}, <b>{name}</b>!
 
-💰 Saldo: <b>{balance}</b>""".format(
+💰 Saldo: <b>{balance}</b>
+
+<i>{quote}</i>""".format(
         greeting=greeting,
         name=name,
-        balance=format_currency(balance)
+        balance=format_currency(balance),
+        quote=quote
     )
 
 
