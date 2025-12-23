@@ -82,8 +82,35 @@ def format_main_menu(balance: Decimal, name: str) -> str:
 {Emoji.USER} Halo, <b>{name}</b>!
 {Emoji.BALANCE} Saldo: <b>{format_currency(balance)}</b>
 
-Pilih menu di bawah:
+{Emoji.INFO} Pilih menu di bawah:
 """
+
+
+def format_rates(rates: dict, usd_to_idr: Decimal) -> str:
+    coin_emojis = {
+        "BTC": "🟠",
+        "ETH": "🔷",
+        "BNB": "🟡",
+        "SOL": "🟣",
+        "USDT": "🟢",
+        "USDC": "🔵",
+    }
+    
+    supported = ["BTC", "ETH", "BNB", "SOL", "USDT", "USDC"]
+    
+    lines = [f"{Emoji.CHART} <b>Harga Crypto Realtime</b>\n"]
+    
+    for symbol in supported:
+        if symbol in rates:
+            price_usd = Decimal(str(rates[symbol]))
+            price_idr = price_usd * usd_to_idr
+            emoji = coin_emojis.get(symbol, "🪙")
+            lines.append(f"{emoji} <b>{symbol}</b>: {format_currency(price_idr)}")
+    
+    lines.append(f"\n{Emoji.CLOCK} <i>Update: Realtime dari OxaPay</i>")
+    lines.append(f"{Emoji.INFO} Rate: $1 = Rp {usd_to_idr:,.0f}")
+    
+    return "\n".join(lines)
 
 
 def format_balance(balance: Decimal) -> str:

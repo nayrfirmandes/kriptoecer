@@ -15,6 +15,7 @@ class CallbackData:
     MENU_WITHDRAW = "menu:withdraw"
     MENU_HISTORY = "menu:history"
     MENU_REFERRAL = "menu:referral"
+    MENU_RATES = "menu:rates"
     MENU_HELP = "menu:help"
     
     BACK_MENU = "back:menu"
@@ -52,19 +53,22 @@ def get_location_keyboard() -> InlineKeyboardMarkup:
 def get_main_menu_keyboard() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
+        InlineKeyboardButton(text="🛒 Beli Crypto", callback_data=CallbackData.MENU_BUY),
+        InlineKeyboardButton(text="💸 Jual Crypto", callback_data=CallbackData.MENU_SELL),
+    )
+    builder.row(
+        InlineKeyboardButton(text="📊 Cek Harga", callback_data=CallbackData.MENU_RATES),
         InlineKeyboardButton(text="💵 Saldo", callback_data=CallbackData.MENU_BALANCE),
-        InlineKeyboardButton(text="🛒 Beli", callback_data=CallbackData.MENU_BUY),
     )
     builder.row(
-        InlineKeyboardButton(text="💸 Jual", callback_data=CallbackData.MENU_SELL),
         InlineKeyboardButton(text="➕ Top Up", callback_data=CallbackData.MENU_TOPUP),
-    )
-    builder.row(
         InlineKeyboardButton(text="➖ Withdraw", callback_data=CallbackData.MENU_WITHDRAW),
-        InlineKeyboardButton(text="📜 Riwayat", callback_data=CallbackData.MENU_HISTORY),
     )
     builder.row(
+        InlineKeyboardButton(text="📜 Riwayat", callback_data=CallbackData.MENU_HISTORY),
         InlineKeyboardButton(text="🎁 Referral", callback_data=CallbackData.MENU_REFERRAL),
+    )
+    builder.row(
         InlineKeyboardButton(text="❓ Bantuan", callback_data=CallbackData.MENU_HELP),
     )
     return builder.as_markup()
