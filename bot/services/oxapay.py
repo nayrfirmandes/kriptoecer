@@ -195,17 +195,18 @@ class OxaPayService:
         callback_url: str,
     ) -> PaymentResult:
         data = {
-            "currency": currency,
             "network": network,
-            "callbackUrl": callback_url,
+            "callback_url": callback_url,
         }
         
         result = await self._request("POST", "/v1/payment/static-address", data)
         
         if result.get("status") == 200:
+            payment_data = result.get("data", {})
             return PaymentResult(
                 success=True,
-                address=result.get("data", {}).get("address"),
+                payment_id=payment_data.get("track_id"),
+                address=payment_data.get("address"),
             )
         
         return PaymentResult(
