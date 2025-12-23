@@ -95,19 +95,13 @@ def format_main_menu(balance: Decimal, name: str, telegram_id: int) -> str:
     greeting = get_wib_greeting()
     quote = get_random_quote()
     
-    return """<b>{greeting}, {name}!</b> {coin}
-<code>ID: {telegram_id}</code>
+    return """{greeting}, <b>{name}</b>!
 
-{money} Saldo: <b>{balance}</b>
+💰 Saldo: <b>{balance}</b>
 
-<i>"{quote}"</i>
-
-Pilih menu:""".format(
-        coin=Emoji.COIN,
-        money=Emoji.MONEY,
+<i>{quote}</i>""".format(
         greeting=greeting,
         name=name,
-        telegram_id=telegram_id,
         balance=format_currency(balance),
         quote=quote
     )

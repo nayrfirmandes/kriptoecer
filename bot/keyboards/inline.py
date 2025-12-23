@@ -28,7 +28,7 @@ def get_terms_keyboard() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
         InlineKeyboardButton(
-            text="Setuju & Daftar",
+            text="✅ Setuju & Daftar",
             callback_data=CallbackData.AGREE_TERMS
         )
     )
@@ -69,24 +69,24 @@ def get_remove_keyboard() -> ReplyKeyboardRemove:
 def get_main_menu_keyboard() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
-        InlineKeyboardButton(text="Beli Crypto", callback_data=CallbackData.MENU_BUY),
-        InlineKeyboardButton(text="Jual Crypto", callback_data=CallbackData.MENU_SELL),
+        InlineKeyboardButton(text="🛒  Beli", callback_data=CallbackData.MENU_BUY),
+        InlineKeyboardButton(text="💵  Jual", callback_data=CallbackData.MENU_SELL),
     )
     builder.row(
-        InlineKeyboardButton(text="Cek Harga", callback_data=CallbackData.MENU_RATES),
-        InlineKeyboardButton(text="Saldo", callback_data=CallbackData.MENU_BALANCE),
+        InlineKeyboardButton(text="💳  Deposit", callback_data=CallbackData.MENU_TOPUP),
+        InlineKeyboardButton(text="💸  Withdraw", callback_data=CallbackData.MENU_WITHDRAW),
     )
     builder.row(
-        InlineKeyboardButton(text="Deposit", callback_data=CallbackData.MENU_TOPUP),
-        InlineKeyboardButton(text="Withdraw", callback_data=CallbackData.MENU_WITHDRAW),
+        InlineKeyboardButton(text="💰  Saldo", callback_data=CallbackData.MENU_BALANCE),
+        InlineKeyboardButton(text="📊  Harga", callback_data=CallbackData.MENU_RATES),
     )
     builder.row(
-        InlineKeyboardButton(text="Riwayat", callback_data=CallbackData.MENU_HISTORY),
-        InlineKeyboardButton(text="Referral", callback_data=CallbackData.MENU_REFERRAL),
+        InlineKeyboardButton(text="📜  Riwayat", callback_data=CallbackData.MENU_HISTORY),
+        InlineKeyboardButton(text="🎁  Referral", callback_data=CallbackData.MENU_REFERRAL),
     )
     builder.row(
-        InlineKeyboardButton(text="Profil", callback_data=CallbackData.MENU_PROFILE),
-        InlineKeyboardButton(text="Bantuan", callback_data=CallbackData.MENU_HELP),
+        InlineKeyboardButton(text="👤  Profil", callback_data=CallbackData.MENU_PROFILE),
+        InlineKeyboardButton(text="⚙️  Bantuan", callback_data=CallbackData.MENU_HELP),
     )
     return builder.as_markup()
 
@@ -94,11 +94,11 @@ def get_main_menu_keyboard() -> InlineKeyboardMarkup:
 def get_balance_keyboard() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
-        InlineKeyboardButton(text="Deposit", callback_data=CallbackData.MENU_TOPUP),
-        InlineKeyboardButton(text="Withdraw", callback_data=CallbackData.MENU_WITHDRAW),
+        InlineKeyboardButton(text="➕ Deposit", callback_data=CallbackData.MENU_TOPUP),
+        InlineKeyboardButton(text="➖ Withdraw", callback_data=CallbackData.MENU_WITHDRAW),
     )
     builder.row(
-        InlineKeyboardButton(text="Kembali", callback_data=CallbackData.BACK_MENU),
+        InlineKeyboardButton(text="◀️ Kembali", callback_data=CallbackData.BACK_MENU),
     )
     return builder.as_markup()
 
@@ -120,7 +120,7 @@ def get_coins_keyboard(coins: list[dict], action: str) -> InlineKeyboardMarkup:
         builder.row(*row)
     
     builder.row(
-        InlineKeyboardButton(text="Kembali", callback_data=CallbackData.BACK_MENU),
+        InlineKeyboardButton(text="◀️ Kembali", callback_data=CallbackData.BACK_MENU),
     )
     return builder.as_markup()
 
@@ -146,7 +146,7 @@ def get_networks_keyboard(networks: list[dict], coin: str, action: str, rate_idr
         )
     
     builder.row(
-        InlineKeyboardButton(text="Kembali", callback_data=f"{action}:back"),
+        InlineKeyboardButton(text="◀️ Kembali", callback_data=f"{action}:back"),
     )
     return builder.as_markup()
 
@@ -155,11 +155,11 @@ def get_confirm_keyboard(action: str, order_id: str) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
         InlineKeyboardButton(
-            text="Konfirmasi",
+            text="✅ Konfirmasi",
             callback_data=f"{action}:confirm:{order_id}"
         ),
         InlineKeyboardButton(
-            text="Batal",
+            text="❌ Batal",
             callback_data=f"{action}:cancel:{order_id}"
         ),
     )
@@ -187,13 +187,13 @@ def get_topup_confirm_keyboard(deposit_id: str) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
         InlineKeyboardButton(
-            text="Sudah Transfer",
+            text="✅ Sudah Transfer",
             callback_data=f"topup:confirm:{deposit_id}"
         ),
     )
     builder.row(
         InlineKeyboardButton(
-            text="Batal",
+            text="❌ Batal",
             callback_data=f"topup:cancel:{deposit_id}"
         ),
     )
@@ -238,7 +238,7 @@ def get_ewallet_options_keyboard() -> InlineKeyboardMarkup:
 def get_back_keyboard(callback_data: str = CallbackData.BACK_MENU) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
-        InlineKeyboardButton(text="Kembali", callback_data=callback_data),
+        InlineKeyboardButton(text="◀️ Kembali", callback_data=callback_data),
     )
     return builder.as_markup()
 
@@ -246,7 +246,7 @@ def get_back_keyboard(callback_data: str = CallbackData.BACK_MENU) -> InlineKeyb
 def get_cancel_keyboard(back_callback: str = CallbackData.BACK_MENU) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
-        InlineKeyboardButton(text="Batal", callback_data=back_callback),
+        InlineKeyboardButton(text="❌ Batal", callback_data=back_callback),
     )
     return builder.as_markup()
 
