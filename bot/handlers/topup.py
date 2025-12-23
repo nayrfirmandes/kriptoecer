@@ -65,7 +65,7 @@ async def show_topup_menu(callback: CallbackQuery, state: FSMContext, db: Prisma
     await callback.answer()
 
 
-@router.callback_query(F.data.startswith("topup:method:"))
+@router.callback_query(F.data.startswith("topup:method:") & ~F.data.endswith(":crypto"))
 async def select_topup_method(callback: CallbackQuery, state: FSMContext, db: Prisma, **kwargs):
     method_id = callback.data.split(":")[-1]
     
