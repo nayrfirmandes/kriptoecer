@@ -296,6 +296,44 @@ async def check_crypto_payment(callback: CallbackQuery, state: FSMContext, db: P
 async def cancel_crypto_deposit(callback: CallbackQuery, state: FSMContext, db: Prisma, **kwargs):
     deposit_id = callback.data.split(":")[-1]
     
+    deposit = await db.deposit.find_unique(where={"id": deposit_id})
+    
+    if not deposit:
+        await callback.answer("Deposit tidak ditemukan.", show_alert=True)
+        return
+    
+    if deposit.status == "COMPLETED":
+        await callback.answer("Deposit sudah selesai diproses.", show_alert=True)
+        return
+    
+    if deposit.cryptobotInvoiceId:
+        cryptobot = get_cryptobot()
+        try:
+            invoice = await cryptobot.get_invoice(deposit.cryptobotInvoiceId)
+            status = invoice.get("status", "")
+            
+            if status == "paid":
+                await db.deposit.update(
+                    where={"id": deposit_id},
+                    data={"status": "COMPLETED"}
+                )
+                await db.balance.update(
+                    where={"userId": deposit.userId},
+                    data={"amount": {"increment": deposit.amount}}
+                )
+                await state.clear()
+                
+                await callback.message.edit_text(
+                    f"{Emoji.CHECK} <b>Deposit Berhasil!</b>\n\n"
+                    f"Pembayaran terdeteksi. Saldo ditambah <b>Rp {deposit.amount:,.0f}</b>",
+                    reply_markup=get_back_keyboard(),
+                    parse_mode="HTML"
+                )
+                await callback.answer("Pembayaran sudah diterima!", show_alert=True)
+                return
+        finally:
+            await cryptobot.close()
+    
     await db.deposit.update(
         where={"id": deposit_id},
         data={"status": "CANCELLED"}
