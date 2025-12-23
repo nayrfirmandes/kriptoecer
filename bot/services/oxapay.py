@@ -2,6 +2,7 @@ import aiohttp
 import hashlib
 import hmac
 import json
+import time
 from decimal import Decimal
 from typing import Optional, Any
 from dataclasses import dataclass
@@ -30,6 +31,13 @@ class PayoutResult:
     error: Optional[str] = None
 
 
+_currencies_cache: dict = {}
+_currencies_cache_time: float = 0
+_prices_cache: dict = {}
+_prices_cache_time: float = 0
+CACHE_TTL = 30
+
+
 class OxaPayService:
     BASE_URL = "https://api.oxapay.com"
     
@@ -38,7 +46,6 @@ class OxaPayService:
         self.payout_api_key = payout_api_key
         self.webhook_secret = webhook_secret
         self._session: Optional[aiohttp.ClientSession] = None
-        self._currencies_cache: Optional[dict] = None
     
     async def _get_session(self) -> aiohttp.ClientSession:
         if self._session is None or self._session.closed:
@@ -79,16 +86,20 @@ class OxaPayService:
             return {"status": 0, "error": str(e)}
     
     async def get_currencies(self, force_refresh: bool = False) -> dict:
-        if self._currencies_cache and not force_refresh:
-            return self._currencies_cache
+        global _currencies_cache, _currencies_cache_time
+        
+        now = time.time()
+        if _currencies_cache and not force_refresh and (now - _currencies_cache_time) < CACHE_TTL:
+            return _currencies_cache
         
         result = await self._request("GET", "/v1/common/currencies")
         
         if result.get("status") == 200:
-            self._currencies_cache = result.get("data", {})
-            return self._currencies_cache
+            _currencies_cache = result.get("data", {})
+            _currencies_cache_time = now
+            return _currencies_cache
         
-        return {}
+        return _currencies_cache or {}
     
     async def get_supported_coins(self) -> list[dict]:
         currencies = await self.get_currencies()
@@ -128,6 +139,12 @@ class OxaPayService:
     
     async def get_prices(self) -> dict:
         """Get all crypto prices in USD"""
+        global _prices_cache, _prices_cache_time
+        
+        now = time.time()
+        if _prices_cache and (now - _prices_cache_time) < CACHE_TTL:
+            return _prices_cache
+        
         session = await self._get_session()
         url = f"{self.BASE_URL}/v1/common/prices"
         
@@ -135,10 +152,12 @@ class OxaPayService:
             async with session.get(url) as resp:
                 result = await resp.json()
                 if result.get("status") == 200:
-                    return result.get("data", {})
+                    _prices_cache = result.get("data", {})
+                    _prices_cache_time = now
+                    return _prices_cache
         except Exception:
             pass
-        return {}
+        return _prices_cache or {}
     
     async def get_exchange_rate(self, from_currency: str, to_currency: str = "USD") -> Optional[Decimal]:
         """Get exchange rate for a specific currency to USD"""
