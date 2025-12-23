@@ -6,10 +6,12 @@ import random
 WIB = timezone(timedelta(hours=7))
 
 QUOTES = [
-    "Beli dan jual crypto dengan mudah, cepat, dan aman bersama kami.",
-    "Partner terpercaya untuk semua kebutuhan trading crypto Anda.",
-    "Transaksi crypto tanpa ribet, harga terbaik setiap saat.",
-    "Investasi crypto lebih mudah dengan layanan terbaik kami.",
+    "Transaksi crypto cepat, aman, terpercaya.",
+    "Partner terbaik untuk trading Anda.",
+    "Beli jual crypto mudah dan aman.",
+    "Investasi crypto bersama kami sekarang.",
+    "Layanan crypto terbaik untuk Anda.",
+    "Trading crypto simpel dan menguntungkan.",
 ]
 
 
@@ -181,19 +183,19 @@ Bagikan ke teman untuk dapat bonus!""".format(
 def format_buy_menu() -> str:
     return """{coin} <b>Beli Crypto</b>
 
-Pilih cryptocurrency:""".format(coin=Emoji.COIN)
+Pilih cryptocurrency yang ingin Anda beli:""".format(coin=Emoji.COIN)
 
 
 def format_sell_menu() -> str:
     return """{money} <b>Jual Crypto</b>
 
-Pilih cryptocurrency:""".format(money=Emoji.MONEY)
+Pilih cryptocurrency yang ingin Anda jual:""".format(money=Emoji.MONEY)
 
 
 def format_coin_networks(coin: str) -> str:
     return """<b>Pilih Network {coin}</b>
 
-Pilih network yang tersedia:""".format(coin=coin)
+Pilih network yang ingin Anda gunakan:""".format(coin=coin)
 
 
 def format_buy_amount(coin: str, network: str, rate: Decimal, margin: Decimal) -> str:
@@ -201,10 +203,10 @@ def format_buy_amount(coin: str, network: str, rate: Decimal, margin: Decimal) -
     return """{coin_emoji} <b>Beli {coin}</b> ({network})
 
 {chart} Rate: <b>{rate}</b> / {coin}
-<i>Sudah termasuk margin {margin}%</i>
+<i>Harga sudah termasuk margin {margin}%</i>
 
-Masukkan jumlah dalam IDR:
-<i>Min: Rp 10.000</i>""".format(
+Masukkan jumlah pembelian dalam Rupiah:
+<i>Minimal pembelian: Rp 10.000</i>""".format(
         coin_emoji=Emoji.COIN,
         chart=Emoji.CHART,
         coin=coin,
@@ -223,17 +225,17 @@ def format_buy_confirm(
     network_fee: Decimal,
     total: Decimal
 ) -> str:
-    return """{coin_emoji} <b>Konfirmasi Pembelian</b>
+    return """{coin_emoji} <b>Konfirmasi Pembelian Crypto</b>
 
 {dot} Coin: <b>{coin}</b> ({network})
 {dot} Jumlah: <b>{fiat}</b>
 {dot} Rate: <b>{rate}</b>/{coin}
-{dot} Fee: <b>{fee}</b>
+{dot} Network Fee: <b>{fee}</b>
 
-{arrow} Anda terima: <b>{crypto}</b>
-{arrow} Dipotong saldo: <b>{total}</b>
+{arrow} Anda akan menerima: <b>{crypto}</b>
+{arrow} Dipotong dari saldo: <b>{total}</b>
 
-Lanjutkan pembelian?""".format(
+Apakah Anda ingin melanjutkan pembelian?""".format(
         coin_emoji=Emoji.COIN,
         dot=Emoji.DOT,
         arrow=Emoji.ARROW,
@@ -255,18 +257,18 @@ def format_sell_confirm(
     rate: Decimal,
     deposit_address: str
 ) -> str:
-    return """{money} <b>Konfirmasi Penjualan</b>
+    return """{money} <b>Konfirmasi Penjualan Crypto</b>
 
 {dot} Coin: <b>{coin}</b> ({network})
 {dot} Jumlah: <b>{crypto}</b>
 {dot} Rate: <b>{rate}</b>/{coin}
 
-{arrow} Saldo bertambah: <b>{fiat}</b>
+{arrow} Saldo Anda akan bertambah: <b>{fiat}</b>
 
-Kirim <b>{crypto}</b> ke:
+Silakan kirim <b>{crypto}</b> ke alamat:
 <code>{address}</code>
 
-{warning} <i>Pastikan network: {network}</i>""".format(
+{warning} <i>Pastikan menggunakan network: {network}</i>""".format(
         money=Emoji.MONEY,
         dot=Emoji.DOT,
         arrow=Emoji.ARROW,
@@ -283,14 +285,14 @@ Kirim <b>{crypto}</b> ke:
 def format_topup_menu() -> str:
     return """{wallet} <b>Deposit Saldo</b>
 
-Pilih metode pembayaran:""".format(wallet=Emoji.WALLET)
+Pilih metode pembayaran yang tersedia:""".format(wallet=Emoji.WALLET)
 
 
 def format_topup_amount(method: str) -> str:
     return """{wallet} <b>Deposit via {method}</b>
 
-Masukkan jumlah (IDR):
-<i>Min: Rp 10.000</i>""".format(wallet=Emoji.WALLET, method=method)
+Masukkan jumlah deposit dalam Rupiah:
+<i>Minimal deposit: Rp 10.000</i>""".format(wallet=Emoji.WALLET, method=method)
 
 
 def format_topup_instruction(
@@ -321,13 +323,14 @@ Transfer ke:
 def format_withdraw_menu() -> str:
     return """{money} <b>Withdraw Saldo</b>
 
-Pilih metode:""".format(money=Emoji.MONEY)
+Pilih metode penarikan yang tersedia:""".format(money=Emoji.MONEY)
 
 
 def format_transaction_success(tx_type: str, amount: Decimal) -> str:
     return """{check} <b>Transaksi Berhasil!</b>
 
-{tx_type}: <b>{amount}</b>""".format(
+{tx_type}: <b>{amount}</b>
+Terima kasih telah menggunakan layanan kami.""".format(
         check=Emoji.CHECK,
         tx_type=tx_type,
         amount=format_currency(amount)
@@ -342,7 +345,7 @@ Anda akan menerima notifikasi setelah dikonfirmasi.""".format(clock=Emoji.CLOCK)
 
 
 def format_error(message: str) -> str:
-    return """{cross} <b>Error</b>
+    return """{cross} <b>Terjadi Kesalahan</b>
 
 {message}""".format(cross=Emoji.CROSS, message=message)
 
