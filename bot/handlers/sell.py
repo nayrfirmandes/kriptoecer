@@ -187,14 +187,12 @@ async def process_sell_amount(message: Message, state: FSMContext, db: Prisma, *
     )
     
     try:
-        webhook_url = f"https://{config.oxapay.webhook_secret}/webhook/oxapay"
-        
         result = await oxapay.create_payment(
             amount=crypto_amount,
             currency=data["coin"],
             network=data["network"],
             order_id=f"SELL_{user.id}_{datetime.utcnow().timestamp()}",
-            callback_url=webhook_url,
+            callback_url=config.oxapay.webhook_url,
             lifetime=3600,
         )
         
@@ -218,7 +216,7 @@ async def process_sell_amount(message: Message, state: FSMContext, db: Prisma, *
             margin=margin,
             network_fee=Decimal("0"),
             deposit_address=result.address,
-            oxapayPaymentId=result.payment_id,
+            oxapay_payment_id=result.payment_id,
             expires_at=datetime.utcnow() + timedelta(hours=1),
         )
         

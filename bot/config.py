@@ -19,6 +19,7 @@ class OxaPayConfig:
     merchant_api_key: str
     payout_api_key: str
     webhook_secret: str
+    webhook_url: str
     base_url: str = "https://api.oxapay.com"
 
 
@@ -46,6 +47,7 @@ def load_config() -> AppConfig:
             merchant_api_key=os.getenv("OXAPAY_MERCHANT_API_KEY", ""),
             payout_api_key=os.getenv("OXAPAY_PAYOUT_API_KEY", ""),
             webhook_secret=os.getenv("OXAPAY_WEBHOOK_SECRET", ""),
+            webhook_url=os.getenv("OXAPAY_WEBHOOK_URL", f"https://{os.getenv('REPLIT_DEV_DOMAIN', 'localhost')}/webhook/oxapay"),
         ),
         debug=os.getenv("DEBUG", "false").lower() == "true",
     )

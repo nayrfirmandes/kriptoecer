@@ -150,6 +150,8 @@ async def create_crypto_order(
     wallet_address: Optional[str] = None,
     deposit_address: Optional[str] = None,
     expires_at: Optional[datetime] = None,
+    oxapay_payment_id: Optional[str] = None,
+    oxapay_payout_id: Optional[str] = None,
 ) -> CryptoOrder:
     return await db.cryptoorder.create(
         data={
@@ -166,6 +168,8 @@ async def create_crypto_order(
             "depositAddress": deposit_address,
             "status": "PENDING",
             "expiresAt": expires_at,
+            "oxapayPaymentId": oxapay_payment_id,
+            "oxapayPayoutId": oxapay_payout_id,
         }
     )
 
