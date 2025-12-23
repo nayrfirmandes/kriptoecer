@@ -61,17 +61,18 @@ class OxaPayService:
         session = await self._get_session()
         url = f"{self.BASE_URL}{endpoint}"
         
-        headers = {"Content-Type": "application/json"}
+        api_key = self.payout_api_key if use_payout_key else self.merchant_api_key
+        headers = {
+            "Content-Type": "application/json",
+            "merchant_api_key": api_key
+        }
         
         try:
             if method == "GET":
                 async with session.get(url, headers=headers) as resp:
                     return await resp.json()
             else:
-                api_key = self.payout_api_key if use_payout_key else self.merchant_api_key
-                payload = {"merchant": api_key}
-                if data:
-                    payload.update(data)
+                payload = data or {}
                 async with session.post(url, json=payload, headers=headers) as resp:
                     return await resp.json()
         except Exception as e:
