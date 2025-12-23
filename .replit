@@ -31,7 +31,7 @@ outputType = "console"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "export BOT_DATABASE=\"postgresql://neondb_owner:npg_3BtMkjUAuvI7@ep-winter-block-a1m7jlv8-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require\" && python run_bot.py"
+args = "export BOT_DATABASE=\"postgresql://neondb_owner:npg_3BtMkjUAuvI7@ep-winter-block-a1m7jlv8-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require\" && npx -y prisma@5.17.0 generate --schema=prisma/schema.prisma && python run_bot.py"
 
 [[workflows.workflow]]
 name = "AdminPanel"
