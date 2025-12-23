@@ -74,8 +74,8 @@ def get_remove_keyboard() -> ReplyKeyboardRemove:
 def get_main_menu_keyboard() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
-        InlineKeyboardButton(text="🛒  Beli", callback_data=CallbackData.MENU_BUY),
-        InlineKeyboardButton(text="💵  Jual", callback_data=CallbackData.MENU_SELL),
+        InlineKeyboardButton(text="🛒  Beli Crypto", callback_data=CallbackData.MENU_BUY),
+        InlineKeyboardButton(text="💵  Jual Crypto", callback_data=CallbackData.MENU_SELL),
     )
     builder.row(
         InlineKeyboardButton(text="💳  Deposit", callback_data=CallbackData.MENU_TOPUP),
@@ -91,7 +91,7 @@ def get_main_menu_keyboard() -> InlineKeyboardMarkup:
     )
     builder.row(
         InlineKeyboardButton(text="👤  Profil", callback_data=CallbackData.MENU_PROFILE),
-        InlineKeyboardButton(text="⚙️  Pengaturan", callback_data=CallbackData.MENU_SETTINGS),
+        InlineKeyboardButton(text="⚙️  Setting", callback_data=CallbackData.MENU_SETTINGS),
     )
     builder.row(
         InlineKeyboardButton(text="❓  Bantuan", callback_data=CallbackData.MENU_HELP),
