@@ -41,17 +41,22 @@ async def main():
     storage = MemoryStorage()
     dp = Dispatcher(storage=storage)
     
-    dp.message.middleware(LoggingMiddleware())
-    dp.callback_query.middleware(LoggingMiddleware())
+    logging_mw = LoggingMiddleware()
+    throttling_mw = ThrottlingMiddleware(rate_limit=0.1)
+    database_mw = DatabaseMiddleware(prisma)
+    user_status_mw = UserStatusMiddleware()
     
-    dp.message.middleware(ThrottlingMiddleware(rate_limit=0.3))
-    dp.callback_query.middleware(ThrottlingMiddleware(rate_limit=0.3))
+    dp.message.middleware(logging_mw)
+    dp.callback_query.middleware(logging_mw)
     
-    dp.message.middleware(DatabaseMiddleware(prisma))
-    dp.callback_query.middleware(DatabaseMiddleware(prisma))
+    dp.message.middleware(throttling_mw)
+    dp.callback_query.middleware(throttling_mw)
     
-    dp.message.middleware(UserStatusMiddleware())
-    dp.callback_query.middleware(UserStatusMiddleware())
+    dp.message.middleware(database_mw)
+    dp.callback_query.middleware(database_mw)
+    
+    dp.message.middleware(user_status_mw)
+    dp.callback_query.middleware(user_status_mw)
     
     router = setup_routers()
     dp.include_router(router)
