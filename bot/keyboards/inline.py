@@ -18,6 +18,10 @@ class CallbackData:
     MENU_RATES = "menu:rates"
     MENU_HELP = "menu:help"
     MENU_PROFILE = "menu:profile"
+    MENU_SETTINGS = "menu:settings"
+    
+    SETTINGS_SET_PIN = "settings:set_pin"
+    SETTINGS_CHANGE_PIN = "settings:change_pin"
     
     BACK_MENU = "back:menu"
     BACK = "back"
@@ -86,7 +90,10 @@ def get_main_menu_keyboard() -> InlineKeyboardMarkup:
     )
     builder.row(
         InlineKeyboardButton(text="👤  Profil", callback_data=CallbackData.MENU_PROFILE),
-        InlineKeyboardButton(text="⚙️  Bantuan", callback_data=CallbackData.MENU_HELP),
+        InlineKeyboardButton(text="⚙️  Pengaturan", callback_data=CallbackData.MENU_SETTINGS),
+    )
+    builder.row(
+        InlineKeyboardButton(text="❓  Bantuan", callback_data=CallbackData.MENU_HELP),
     )
     return builder.as_markup()
 
@@ -239,6 +246,24 @@ def get_back_keyboard(callback_data: str = CallbackData.BACK_MENU) -> InlineKeyb
     builder = InlineKeyboardBuilder()
     builder.row(
         InlineKeyboardButton(text="◀️ Kembali", callback_data=callback_data),
+    )
+    return builder.as_markup()
+
+
+def get_settings_keyboard(has_pin: bool = False) -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+    
+    if has_pin:
+        builder.row(
+            InlineKeyboardButton(text="🔄 Ubah PIN", callback_data=CallbackData.SETTINGS_CHANGE_PIN),
+        )
+    else:
+        builder.row(
+            InlineKeyboardButton(text="🔐 Atur PIN", callback_data=CallbackData.SETTINGS_SET_PIN),
+        )
+    
+    builder.row(
+        InlineKeyboardButton(text="◀️ Kembali", callback_data=CallbackData.BACK_MENU),
     )
     return builder.as_markup()
 

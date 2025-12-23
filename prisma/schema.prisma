@@ -43,6 +43,7 @@ model User {
   whatsapp      String?
   latitude      Float?
   longitude     Float?
+  pinHash       String?     @map("pin_hash")
   referralCode  String      @unique @map("referral_code")
   referredById  String?     @map("referred_by_id")
   referredBy    User?       @relation("Referrals", fields: [referredById], references: [id])

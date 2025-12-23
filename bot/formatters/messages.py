@@ -56,6 +56,9 @@ class Emoji:
     WALLET = "💳"
     WARNING = "⚠️"
     INFO = "ℹ️"
+    GEAR = "⚙️"
+    LOCK = "🔐"
+    HELP = "❓"
 
 
 def format_currency(amount: Decimal, symbol: str = "IDR") -> str:

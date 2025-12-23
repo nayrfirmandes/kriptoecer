@@ -9,6 +9,7 @@ from .withdraw import router as withdraw_router
 from .buy import router as buy_router
 from .sell import router as sell_router
 from .history import router as history_router
+from .settings import router as settings_router
 from .admin import router as admin_router
 
 
@@ -24,6 +25,7 @@ def setup_routers() -> Router:
     main_router.include_router(buy_router)
     main_router.include_router(sell_router)
     main_router.include_router(history_router)
+    main_router.include_router(settings_router)
     main_router.include_router(admin_router)
     
     return main_router
