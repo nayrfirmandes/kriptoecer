@@ -6,6 +6,18 @@ const nextConfig: NextConfig = {
     'localhost',
     '127.0.0.1',
   ],
+  async rewrites() {
+    return [
+      {
+        source: '/telegram/webhook',
+        destination: 'http://localhost:8080/telegram/webhook',
+      },
+      {
+        source: '/oxapay/webhook',
+        destination: 'http://localhost:8080/oxapay/webhook',
+      },
+    ];
+  },
   async headers() {
     return [
       {
