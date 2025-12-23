@@ -1,7 +1,7 @@
 from typing import Any, Awaitable, Callable, Dict
 from aiogram import BaseMiddleware
 from aiogram.types import TelegramObject
-from prisma import Prisma
+from prisma_client import Prisma
 
 from bot.services.oxapay import OxaPayService
 from bot.config import config

@@ -1,7 +1,7 @@
 from decimal import Decimal
 from typing import Optional
 from datetime import datetime
-from prisma import Prisma, Json
+from prisma_client import Prisma, Json
 from prisma.models import User, Balance, Transaction, Deposit, Withdrawal, CryptoOrder, CoinSetting, PaymentMethod, ReferralSetting
 
 

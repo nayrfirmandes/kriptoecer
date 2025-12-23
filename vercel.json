@@ -18,6 +18,5 @@
       "source": "/api/set-webhook",
       "destination": "/api/set_webhook"
     }
-  ],
-  "installCommand": "pip install -r requirements.txt && python -m prisma generate"
+  ]
 }

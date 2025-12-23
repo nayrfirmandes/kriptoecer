@@ -3,7 +3,7 @@ from aiogram import Router, F
 from aiogram.types import CallbackQuery, Message
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from prisma import Prisma
+from prisma_client import Prisma
 from typing import Optional
 
 from bot.formatters.messages import Emoji

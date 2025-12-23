@@ -2,7 +2,7 @@ from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command, CommandStart
 from aiogram.fsm.context import FSMContext
-from prisma import Prisma
+from prisma_client import Prisma
 from typing import Optional
 
 from bot.formatters.messages import format_welcome, format_terms, format_main_menu

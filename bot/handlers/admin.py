@@ -2,7 +2,7 @@ from decimal import Decimal
 from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command
-from prisma import Prisma
+from prisma_client import Prisma
 
 from bot.formatters.messages import Emoji
 from bot.db.queries import update_balance

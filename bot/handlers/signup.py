@@ -2,7 +2,7 @@ from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery, ContentType
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from prisma import Prisma
+from prisma_client import Prisma
 
 from bot.formatters.messages import (
     format_terms,

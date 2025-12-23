@@ -2,7 +2,7 @@ from typing import Any, Awaitable, Callable, Dict
 from datetime import datetime, timedelta, timezone
 from aiogram import BaseMiddleware
 from aiogram.types import TelegramObject, Message, CallbackQuery
-from prisma import Prisma
+from prisma_client import Prisma
 from cachetools import TTLCache
 
 

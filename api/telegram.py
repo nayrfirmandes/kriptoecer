@@ -1,6 +1,5 @@
 import os
 import sys
-import subprocess
 
 root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if root_path not in sys.path:
@@ -17,18 +16,6 @@ _bot = None
 _dp = None
 _prisma = None
 _initialized = False
-
-
-def ensure_prisma_generated():
-    try:
-        subprocess.run(
-            ["python", "-m", "prisma", "generate"],
-            check=True,
-            capture_output=True,
-            cwd=root_path
-        )
-    except Exception as e:
-        print(f"Prisma generate error: {e}")
 
 
 def get_config():
@@ -54,9 +41,7 @@ async def init():
     if _initialized:
         return _bot, _dp
     
-    ensure_prisma_generated()
-    
-    from prisma import Prisma
+    from prisma_client import Prisma
     from aiogram import Bot, Dispatcher
     from aiogram.client.default import DefaultBotProperties
     from aiogram.enums import ParseMode

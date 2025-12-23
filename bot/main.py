@@ -6,7 +6,7 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
-from prisma import Prisma
+from prisma_client import Prisma
 
 from bot.config import config
 from bot.handlers import setup_routers

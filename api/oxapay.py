@@ -1,6 +1,5 @@
 import os
 import sys
-import subprocess
 
 root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if root_path not in sys.path:
@@ -17,22 +16,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-def ensure_prisma_generated():
-    try:
-        subprocess.run(
-            ["python", "-m", "prisma", "generate"],
-            check=True,
-            capture_output=True,
-            cwd=root_path
-        )
-    except Exception as e:
-        print(f"Prisma generate error: {e}")
-
-
 async def process_oxapay_webhook(data: dict):
-    ensure_prisma_generated()
-    
-    from prisma import Prisma
+    from prisma_client import Prisma
     
     db = Prisma()
     await db.connect()
