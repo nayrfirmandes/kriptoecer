@@ -63,7 +63,7 @@ async def show_stock(callback: CallbackQuery, oxapay: OxaPayService, **kwargs):
     await callback.answer()
     
     await callback.message.edit_text(
-        f"{Emoji.LOADING} Mengambil data stock dari wallet...",
+        f"{Emoji.CLOCK} Mengambil data stock dari wallet...",
         parse_mode="HTML"
     )
     
