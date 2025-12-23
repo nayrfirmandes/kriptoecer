@@ -70,6 +70,14 @@ async def get_user_by_referral_code(db: Prisma, code: str) -> Optional[User]:
     return await db.user.find_unique(where={"referralCode": code})
 
 
+async def get_user_by_email(db: Prisma, email: str) -> Optional[User]:
+    return await db.user.find_first(where={"email": email})
+
+
+async def get_user_by_whatsapp(db: Prisma, whatsapp: str) -> Optional[User]:
+    return await db.user.find_first(where={"whatsapp": whatsapp})
+
+
 async def create_deposit(
     db: Prisma,
     user_id: str,

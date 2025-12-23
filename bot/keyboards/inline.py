@@ -106,7 +106,7 @@ def get_balance_keyboard() -> InlineKeyboardMarkup:
         InlineKeyboardButton(text="➖ Withdraw", callback_data=CallbackData.MENU_WITHDRAW),
     )
     builder.row(
-        InlineKeyboardButton(text="◀️ Kembali", callback_data=CallbackData.BACK_MENU),
+        InlineKeyboardButton(text="← Kembali", callback_data=CallbackData.BACK_MENU),
     )
     return builder.as_markup()
 
@@ -128,7 +128,7 @@ def get_coins_keyboard(coins: list[dict], action: str) -> InlineKeyboardMarkup:
         builder.row(*row)
     
     builder.row(
-        InlineKeyboardButton(text="◀️ Kembali", callback_data=CallbackData.BACK_MENU),
+        InlineKeyboardButton(text="← Kembali", callback_data=CallbackData.BACK_MENU),
     )
     return builder.as_markup()
 
@@ -154,7 +154,7 @@ def get_networks_keyboard(networks: list[dict], coin: str, action: str, rate_idr
         )
     
     builder.row(
-        InlineKeyboardButton(text="◀️ Kembali", callback_data=f"{action}:back"),
+        InlineKeyboardButton(text="← Kembali", callback_data=f"{action}:back"),
     )
     return builder.as_markup()
 
@@ -246,7 +246,7 @@ def get_ewallet_options_keyboard() -> InlineKeyboardMarkup:
 def get_back_keyboard(callback_data: str = CallbackData.BACK_MENU) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
-        InlineKeyboardButton(text="◀️ Kembali", callback_data=callback_data),
+        InlineKeyboardButton(text="← Kembali", callback_data=callback_data),
     )
     return builder.as_markup()
 
@@ -264,7 +264,7 @@ def get_settings_keyboard(has_pin: bool = False) -> InlineKeyboardMarkup:
         )
     
     builder.row(
-        InlineKeyboardButton(text="◀️ Kembali", callback_data=CallbackData.BACK_MENU),
+        InlineKeyboardButton(text="← Kembali", callback_data=CallbackData.BACK_MENU),
     )
     return builder.as_markup()
 
@@ -279,7 +279,7 @@ def get_referral_keyboard(ref_code: str, bot_username: str = "kriptoecerbot") ->
         InlineKeyboardButton(text="📤 Bagikan Link", url=share_url),
     )
     builder.row(
-        InlineKeyboardButton(text="◀️ Kembali", callback_data=CallbackData.BACK_MENU),
+        InlineKeyboardButton(text="← Kembali", callback_data=CallbackData.BACK_MENU),
     )
     return builder.as_markup()
 

@@ -32,6 +32,8 @@ from bot.utils.helpers import (
 from bot.db.queries import (
     get_user_by_telegram_id,
     get_user_by_referral_code,
+    get_user_by_email,
+    get_user_by_whatsapp,
     create_user,
     get_referral_setting,
     process_referral_bonus,
@@ -67,12 +69,20 @@ async def agree_terms(callback: CallbackQuery, state: FSMContext, db: Prisma, **
 
 
 @router.message(SignupStates.waiting_email)
-async def process_email(message: Message, state: FSMContext, **kwargs):
+async def process_email(message: Message, state: FSMContext, db: Prisma, **kwargs):
     email = message.text.strip().lower()
     
     if not validate_email(email):
         await message.answer(
             format_error("Format email tidak valid. Silakan coba lagi."),
+            parse_mode="HTML"
+        )
+        return
+    
+    existing = await get_user_by_email(db, email)
+    if existing:
+        await message.answer(
+            format_error("Email sudah terdaftar. Gunakan email lain."),
             parse_mode="HTML"
         )
         return
@@ -88,11 +98,21 @@ async def process_email(message: Message, state: FSMContext, **kwargs):
 
 
 @router.message(SignupStates.waiting_whatsapp, F.content_type == ContentType.CONTACT)
-async def process_whatsapp_contact(message: Message, state: FSMContext, **kwargs):
+async def process_whatsapp_contact(message: Message, state: FSMContext, db: Prisma, **kwargs):
     contact = message.contact
     phone = contact.phone_number
     
     normalized = normalize_phone(phone)
+    
+    existing = await get_user_by_whatsapp(db, normalized)
+    if existing:
+        await message.answer(
+            format_error("Nomor WhatsApp sudah terdaftar. Gunakan nomor lain."),
+            reply_markup=get_phone_keyboard(),
+            parse_mode="HTML"
+        )
+        return
+    
     await state.update_data(whatsapp=normalized)
     await state.set_state(SignupStates.waiting_location)
     
@@ -104,7 +124,7 @@ async def process_whatsapp_contact(message: Message, state: FSMContext, **kwargs
 
 
 @router.message(SignupStates.waiting_whatsapp)
-async def process_whatsapp(message: Message, state: FSMContext, **kwargs):
+async def process_whatsapp(message: Message, state: FSMContext, db: Prisma, **kwargs):
     phone = message.text.strip() if message.text else ""
     
     if not validate_phone(phone):
@@ -116,6 +136,16 @@ async def process_whatsapp(message: Message, state: FSMContext, **kwargs):
         return
     
     normalized = normalize_phone(phone)
+    
+    existing = await get_user_by_whatsapp(db, normalized)
+    if existing:
+        await message.answer(
+            format_error("Nomor WhatsApp sudah terdaftar. Gunakan nomor lain."),
+            reply_markup=get_phone_keyboard(),
+            parse_mode="HTML"
+        )
+        return
+    
     await state.update_data(whatsapp=normalized)
     await state.set_state(SignupStates.waiting_location)
     
