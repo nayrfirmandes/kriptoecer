@@ -60,7 +60,7 @@ async def show_referral(callback: CallbackQuery, db: Prisma, user: Optional[dict
 
 @router.callback_query(F.data == CallbackData.MENU_HELP)
 async def show_help(callback: CallbackQuery, **kwargs):
-    help_text = """<b>Bantuan</b>
+    help_text = """{info} <b>Bantuan</b>
 
 <b>Cara Menggunakan:</b>
 
@@ -76,10 +76,15 @@ async def show_help(callback: CallbackQuery, **kwargs):
 4. <b>Withdraw</b>
    Request withdraw {arrow} Tunggu proses {arrow} Dana terkirim.
 
-<b>Penting:</b>
+{warning} <b>Penting:</b>
 {dot} Pastikan alamat wallet benar
 {dot} Transaksi crypto bersifat final
-{dot} Simpan bukti transaksi""".format(arrow=Emoji.ARROW, dot=Emoji.DOT)
+{dot} Simpan bukti transaksi""".format(
+        info=Emoji.INFO,
+        arrow=Emoji.ARROW,
+        dot=Emoji.DOT,
+        warning=Emoji.WARNING
+    )
     
     await callback.message.edit_text(
         help_text,

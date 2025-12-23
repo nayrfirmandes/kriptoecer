@@ -31,12 +31,9 @@ async def admin_menu(message: Message, db: Prisma, **kwargs):
         f"{Emoji.DOT} Pending Top Up: {pending_deposits}\n"
         f"{Emoji.DOT} Pending Withdraw: {pending_withdrawals}\n\n"
         f"<b>Commands:</b>\n"
-        f"/pending_topup\n"
-        f"/pending_withdraw\n"
-        f"/approve_topup [id]\n"
-        f"/reject_topup [id]\n"
-        f"/approve_withdraw [id]\n"
-        f"/reject_withdraw [id]",
+        f"/pending_topup - /pending_withdraw\n"
+        f"/approve_topup [id] - /reject_topup [id]\n"
+        f"/approve_withdraw [id] - /reject_withdraw [id]",
         parse_mode="HTML"
     )
 

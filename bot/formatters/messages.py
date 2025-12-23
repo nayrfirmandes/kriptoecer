@@ -3,11 +3,18 @@ from typing import Optional
 
 
 class Emoji:
-    CHECK = "✓"
-    CROSS = "✗"
+    CHECK = "✅"
+    CROSS = "❌"
     ARROW = "→"
     DOT = "•"
-    DIVIDER = "─"
+    MONEY = "💰"
+    COIN = "🪙"
+    CHART = "📊"
+    GIFT = "🎁"
+    CLOCK = "⏳"
+    WALLET = "💳"
+    WARNING = "⚠️"
+    INFO = "ℹ️"
 
 
 def format_currency(amount: Decimal, symbol: str = "IDR") -> str:
@@ -17,14 +24,14 @@ def format_currency(amount: Decimal, symbol: str = "IDR") -> str:
 
 
 def format_welcome() -> str:
-    return """<b>Selamat Datang di KriptoEcer</b>
+    return """<b>Selamat Datang di KriptoEcer</b> {coin}
 
 Platform jual beli crypto terpercaya.
-{0} Transaksi cepat & aman
-{0} Harga kompetitif  
-{0} Support 24/7
+{dot} Transaksi cepat & aman
+{dot} Harga kompetitif  
+{dot} Support 24/7
 
-Silakan daftar untuk mulai trading.""".format(Emoji.DOT)
+Silakan daftar untuk mulai trading.""".format(coin=Emoji.COIN, dot=Emoji.DOT)
 
 
 def format_terms() -> str:
@@ -38,22 +45,27 @@ Dengan menggunakan layanan ini, Anda menyetujui:
 4. Transaksi bersifat final setelah dikonfirmasi
 5. Kami berhak membekukan akun yang mencurigakan
 
-Pastikan Anda memahami risiko trading crypto."""
+{warning} Pastikan Anda memahami risiko trading crypto.""".format(warning=Emoji.WARNING)
 
 
 def format_main_menu(balance: Decimal, name: str) -> str:
-    return """<b>Menu Utama</b>
+    return """<b>Menu Utama</b> {coin}
 
 Halo, <b>{name}</b>
-Saldo: <b>{balance}</b>
+{money} Saldo: <b>{balance}</b>
 
-Pilih menu di bawah:""".format(name=name, balance=format_currency(balance))
+Pilih menu di bawah:""".format(
+        coin=Emoji.COIN,
+        money=Emoji.MONEY,
+        name=name,
+        balance=format_currency(balance)
+    )
 
 
 def format_rates(rates: dict, usd_to_idr: Decimal) -> str:
     supported = ["BTC", "ETH", "BNB", "SOL", "USDT", "USDC"]
     
-    lines = ["<b>Harga Crypto</b>\n"]
+    lines = [f"{Emoji.CHART} <b>Harga Crypto</b>\n"]
     
     for symbol in supported:
         if symbol in rates:
@@ -67,12 +79,16 @@ def format_rates(rates: dict, usd_to_idr: Decimal) -> str:
 
 
 def format_balance(balance: Decimal) -> str:
-    return """<b>Saldo Anda</b>
+    return """{money} <b>Saldo Anda</b>
 
 <b>{balance}</b>
 
-{0} Deposit untuk menambah saldo
-{0} Withdraw untuk menarik saldo""".format(Emoji.DOT, balance=format_currency(balance))
+{dot} Deposit untuk menambah saldo
+{dot} Withdraw untuk menarik saldo""".format(
+        money=Emoji.MONEY,
+        dot=Emoji.DOT,
+        balance=format_currency(balance)
+    )
 
 
 def format_signup_email() -> str:
@@ -99,32 +115,36 @@ Klik tombol di bawah untuk share lokasi."""
 
 
 def format_signup_referral() -> str:
-    return """<b>Kode Referral</b> (Opsional)
+    return """{gift} <b>Kode Referral</b> (Opsional)
 
 Jika punya kode referral dari teman, masukkan sekarang.
 
-Atau klik "Lewati" untuk lanjut."""
+Atau klik "Lewati" untuk lanjut.""".format(gift=Emoji.GIFT)
 
 
 def format_signup_success(referral_code: str) -> str:
-    return """<b>Pendaftaran Berhasil</b> {check}
+    return """{check} <b>Pendaftaran Berhasil!</b>
 
 Akun Anda sudah aktif.
 
-Kode referral Anda: <code>{code}</code>
-Bagikan ke teman untuk dapat bonus!""".format(check=Emoji.CHECK, code=referral_code)
+{gift} Kode referral: <code>{code}</code>
+Bagikan ke teman untuk dapat bonus!""".format(
+        check=Emoji.CHECK,
+        gift=Emoji.GIFT,
+        code=referral_code
+    )
 
 
 def format_buy_menu() -> str:
-    return """<b>Beli Crypto</b>
+    return """{coin} <b>Beli Crypto</b>
 
-Pilih cryptocurrency:"""
+Pilih cryptocurrency:""".format(coin=Emoji.COIN)
 
 
 def format_sell_menu() -> str:
-    return """<b>Jual Crypto</b>
+    return """{money} <b>Jual Crypto</b>
 
-Pilih cryptocurrency:"""
+Pilih cryptocurrency:""".format(money=Emoji.MONEY)
 
 
 def format_coin_networks(coin: str) -> str:
@@ -135,13 +155,15 @@ Pilih network yang tersedia:""".format(coin=coin)
 
 def format_buy_amount(coin: str, network: str, rate: Decimal, margin: Decimal) -> str:
     final_rate = rate * (1 + margin / 100)
-    return """<b>Beli {coin}</b> ({network})
+    return """{coin_emoji} <b>Beli {coin}</b> ({network})
 
-Rate: <b>{rate}</b> / {coin}
+{chart} Rate: <b>{rate}</b> / {coin}
 <i>Sudah termasuk margin {margin}%</i>
 
 Masukkan jumlah dalam IDR:
 <i>Min: Rp 10.000</i>""".format(
+        coin_emoji=Emoji.COIN,
+        chart=Emoji.CHART,
         coin=coin,
         network=network,
         rate=format_currency(final_rate),
@@ -158,7 +180,7 @@ def format_buy_confirm(
     network_fee: Decimal,
     total: Decimal
 ) -> str:
-    return """<b>Konfirmasi Pembelian</b>
+    return """{coin_emoji} <b>Konfirmasi Pembelian</b>
 
 {dot} Coin: <b>{coin}</b> ({network})
 {dot} Jumlah: <b>{fiat}</b>
@@ -166,9 +188,10 @@ def format_buy_confirm(
 {dot} Fee: <b>{fee}</b>
 
 {arrow} Anda terima: <b>{crypto}</b>
-{arrow} Dipotong: <b>{total}</b>
+{arrow} Dipotong saldo: <b>{total}</b>
 
 Lanjutkan pembelian?""".format(
+        coin_emoji=Emoji.COIN,
         dot=Emoji.DOT,
         arrow=Emoji.ARROW,
         coin=coin,
@@ -189,7 +212,7 @@ def format_sell_confirm(
     rate: Decimal,
     deposit_address: str
 ) -> str:
-    return """<b>Konfirmasi Penjualan</b>
+    return """{money} <b>Konfirmasi Penjualan</b>
 
 {dot} Coin: <b>{coin}</b> ({network})
 {dot} Jumlah: <b>{crypto}</b>
@@ -200,9 +223,11 @@ def format_sell_confirm(
 Kirim <b>{crypto}</b> ke:
 <code>{address}</code>
 
-<i>Pastikan network: {network}</i>""".format(
+{warning} <i>Pastikan network: {network}</i>""".format(
+        money=Emoji.MONEY,
         dot=Emoji.DOT,
         arrow=Emoji.ARROW,
+        warning=Emoji.WARNING,
         coin=coin,
         network=network,
         crypto=format_currency(crypto_amount, coin),
@@ -213,16 +238,16 @@ Kirim <b>{crypto}</b> ke:
 
 
 def format_topup_menu() -> str:
-    return """<b>Deposit Saldo</b>
+    return """{wallet} <b>Deposit Saldo</b>
 
-Pilih metode pembayaran:"""
+Pilih metode pembayaran:""".format(wallet=Emoji.WALLET)
 
 
 def format_topup_amount(method: str) -> str:
-    return """<b>Deposit via {method}</b>
+    return """{wallet} <b>Deposit via {method}</b>
 
 Masukkan jumlah (IDR):
-<i>Min: Rp 10.000</i>""".format(method=method)
+<i>Min: Rp 10.000</i>""".format(wallet=Emoji.WALLET, method=method)
 
 
 def format_topup_instruction(
@@ -231,7 +256,7 @@ def format_topup_instruction(
     account_name: str,
     amount: Decimal
 ) -> str:
-    return """<b>Instruksi Pembayaran</b>
+    return """{wallet} <b>Instruksi Pembayaran</b>
 
 Transfer ke:
 {dot} <b>{method}</b>
@@ -239,8 +264,10 @@ Transfer ke:
 {dot} Nama: <b>{account_name}</b>
 {dot} Jumlah: <b>{amount}</b>
 
-<i>Transfer dengan jumlah TEPAT</i>""".format(
+{warning} <i>Transfer dengan jumlah TEPAT</i>""".format(
+        wallet=Emoji.WALLET,
         dot=Emoji.DOT,
+        warning=Emoji.WARNING,
         method=method,
         account_no=account_no,
         account_name=account_name,
@@ -249,13 +276,13 @@ Transfer ke:
 
 
 def format_withdraw_menu() -> str:
-    return """<b>Withdraw Saldo</b>
+    return """{money} <b>Withdraw Saldo</b>
 
-Pilih metode:"""
+Pilih metode:""".format(money=Emoji.MONEY)
 
 
 def format_transaction_success(tx_type: str, amount: Decimal) -> str:
-    return """<b>Transaksi Berhasil</b> {check}
+    return """{check} <b>Transaksi Berhasil!</b>
 
 {tx_type}: <b>{amount}</b>""".format(
         check=Emoji.CHECK,
@@ -265,25 +292,26 @@ def format_transaction_success(tx_type: str, amount: Decimal) -> str:
 
 
 def format_transaction_pending() -> str:
-    return """<b>Menunggu Konfirmasi</b>
+    return """{clock} <b>Menunggu Konfirmasi</b>
 
 Transaksi sedang diproses.
-Anda akan menerima notifikasi setelah dikonfirmasi."""
+Anda akan menerima notifikasi setelah dikonfirmasi.""".format(clock=Emoji.CLOCK)
 
 
 def format_error(message: str) -> str:
-    return """<b>Error</b> {cross}
+    return """{cross} <b>Error</b>
 
 {message}""".format(cross=Emoji.CROSS, message=message)
 
 
 def format_insufficient_balance(required: Decimal, current: Decimal) -> str:
-    return """<b>Saldo Tidak Cukup</b>
+    return """{warning} <b>Saldo Tidak Cukup</b>
 
 Dibutuhkan: <b>{required}</b>
 Saldo Anda: <b>{current}</b>
 
 Silakan deposit terlebih dahulu.""".format(
+        warning=Emoji.WARNING,
         required=format_currency(required),
         current=format_currency(current)
     )
@@ -310,13 +338,15 @@ def format_history_item(
 
 
 def format_referral_info(code: str, count: int, bonus_earned: Decimal) -> str:
-    return """<b>Program Referral</b>
+    return """{gift} <b>Program Referral</b>
 
 Kode Anda: <code>{code}</code>
 Total Referral: <b>{count}</b>
-Bonus Diperoleh: <b>{bonus}</b>
+{money} Bonus: <b>{bonus}</b>
 
 Bagikan kode Anda dan dapatkan bonus!""".format(
+        gift=Emoji.GIFT,
+        money=Emoji.MONEY,
         code=code,
         count=count,
         bonus=format_currency(bonus_earned)
