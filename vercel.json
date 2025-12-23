@@ -3,7 +3,10 @@
   "builds": [
     {
       "src": "api/*.py",
-      "use": "@vercel/python"
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "50mb"
+      }
     }
   ],
   "routes": [
@@ -19,5 +22,11 @@
       "src": "/api/set-webhook",
       "dest": "/api/set_webhook.py"
     }
-  ]
+  ],
+  "build": {
+    "env": {
+      "PRISMA_GENERATE_SKIP_AUTOINSTALL": "true"
+    }
+  },
+  "installCommand": "pip install -r requirements.txt && prisma generate"
 }

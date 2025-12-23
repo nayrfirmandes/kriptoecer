@@ -17,13 +17,19 @@ git push origin main
 
 ### 3. Setup Environment Variables
 Di halaman configure project, tambahkan Environment Variables:
+
+**WAJIB (untuk build):**
+- `BOT_DATABASE` - PostgreSQL connection string (NeonSQL) - **HARUS ADA SAAT BUILD untuk prisma generate**
+
+**WAJIB (untuk runtime):**
 - `TELEGRAM_BOT_TOKEN` - Token dari @BotFather
-- `BOT_DATABASE` - PostgreSQL connection string (NeonSQL)
+- `CRYPTOBOT_API_TOKEN` - CryptoBot API token
+- `ADMIN_TELEGRAM_IDS` - Comma-separated admin Telegram IDs
+
+**OPSIONAL:**
 - `OXAPAY_MERCHANT_API_KEY` - OxaPay merchant API key
 - `OXAPAY_PAYOUT_API_KEY` - OxaPay payout API key
 - `OXAPAY_WEBHOOK_SECRET` - OxaPay webhook secret
-- `CRYPTOBOT_API_TOKEN` - CryptoBot API token
-- `ADMIN_TELEGRAM_IDS` - Comma-separated admin Telegram IDs
 
 ### 4. Deploy
 Klik "Deploy" dan tunggu selesai.
