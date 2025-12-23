@@ -37,13 +37,13 @@ args = "python run_bot.py"
 name = "AdminPanel"
 author = "agent"
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd admin && npm run dev -- -p 5000"
-waitForPort = 5000
-
 [workflows.workflow.metadata]
 outputType = "webview"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd admin && export $(grep -v '^#' ../.env | xargs) && npm run dev -- -p 5000"
+waitForPort = 5000
 
 [[ports]]
 localPort = 5000
