@@ -6,10 +6,10 @@ import random
 WIB = timezone(timedelta(hours=7))
 
 QUOTES = [
-    "Transaksi cepat, aman, terpercaya.",
-    "Partner crypto terbaik untuk Anda.",
-    "Beli, jual, untung bersama kami.",
-    "Investasi crypto mudah dan aman.",
+    "Beli dan jual crypto dengan mudah, cepat, dan aman bersama kami.",
+    "Partner terpercaya untuk semua kebutuhan trading crypto Anda.",
+    "Transaksi crypto tanpa ribet, harga terbaik setiap saat.",
+    "Investasi crypto lebih mudah dengan layanan terbaik kami.",
 ]
 
 
