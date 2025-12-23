@@ -110,7 +110,7 @@ def format_main_menu(balance: Decimal, name: str, telegram_id: int) -> str:
 def format_rates(rates: dict, usd_to_idr: Decimal) -> str:
     supported = ["BTC", "ETH", "BNB", "SOL", "USDT", "USDC"]
     
-    lines = [f"{Emoji.CHART} <b>Harga Crypto</b>\n"]
+    lines = [f"{Emoji.CHART} <b>Harga Crypto Saat Ini</b>\n"]
     
     for symbol in supported:
         if symbol in rates:
@@ -118,7 +118,8 @@ def format_rates(rates: dict, usd_to_idr: Decimal) -> str:
             price_idr = price_usd * usd_to_idr
             lines.append(f"{Emoji.DOT} <b>{symbol}</b>: {format_currency(price_idr)}")
     
-    lines.append(f"\n<i>Rate: $1 = Rp {usd_to_idr:,.0f}</i>")
+    lines.append(f"\n<i>Kurs saat ini: $1 = Rp {usd_to_idr:,.0f}</i>")
+    lines.append(f"<i>Harga diperbarui secara real-time.</i>")
     
     return "\n".join(lines)
 
@@ -383,19 +384,27 @@ def format_history_item(
     return f"{status_symbol} {tx_type}{coin_str}: {format_currency(amount)} - {created_at}"
 
 
-def format_referral_info(code: str, count: int, bonus_earned: Decimal) -> str:
-    return """{gift} <b>Program Referral</b>
+def format_referral_info(code: str, count: int, bonus_earned: Decimal, bot_username: str = "kriptoecerbot") -> str:
+    ref_link = f"https://t.me/{bot_username}?start={code}"
+    return """{gift} <b>Program Referral Anda</b>
 
-Kode Anda: <code>{code}</code>
-Total Referral: <b>{count}</b>
-{money} Bonus: <b>{bonus}</b>
+{dot} Kode Referral: <code>{code}</code>
+{dot} Total Undangan: <b>{count} orang</b>
+{money} Total Bonus: <b>{bonus}</b>
 
-Bagikan kode Anda dan dapatkan bonus!""".format(
+{link} <b>Link Referral:</b>
+<code>{ref_link}</code>
+
+Bagikan link di atas kepada teman Anda.
+Dapatkan bonus setiap ada yang mendaftar!""".format(
         gift=Emoji.GIFT,
+        dot=Emoji.DOT,
         money=Emoji.MONEY,
+        link=Emoji.ARROW,
         code=code,
         count=count,
-        bonus=format_currency(bonus_earned)
+        bonus=format_currency(bonus_earned),
+        ref_link=ref_link
     )
 
 

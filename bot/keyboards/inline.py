@@ -243,6 +243,21 @@ def get_back_keyboard(callback_data: str = CallbackData.BACK_MENU) -> InlineKeyb
     return builder.as_markup()
 
 
+def get_referral_keyboard(ref_code: str, bot_username: str = "kriptoecerbot") -> InlineKeyboardMarkup:
+    ref_link = f"https://t.me/{bot_username}?start={ref_code}"
+    share_text = f"Yuk trading crypto bareng aku di @{bot_username}! Daftar pakai link ini: {ref_link}"
+    share_url = f"https://t.me/share/url?url={ref_link}&text={share_text}"
+    
+    builder = InlineKeyboardBuilder()
+    builder.row(
+        InlineKeyboardButton(text="📤 Bagikan Link", url=share_url),
+    )
+    builder.row(
+        InlineKeyboardButton(text="◀️ Kembali", callback_data=CallbackData.BACK_MENU),
+    )
+    return builder.as_markup()
+
+
 def get_cancel_keyboard(back_callback: str = CallbackData.BACK_MENU) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(

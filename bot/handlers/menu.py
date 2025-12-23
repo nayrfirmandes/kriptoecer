@@ -6,7 +6,7 @@ from aiogram.fsm.context import FSMContext
 from prisma import Prisma
 
 from bot.formatters.messages import format_referral_info, format_rates, format_profile, Emoji
-from bot.keyboards.inline import CallbackData, get_back_keyboard
+from bot.keyboards.inline import CallbackData, get_back_keyboard, get_referral_keyboard
 from bot.db.queries import get_referral_count, get_referral_bonus_earned, get_user_by_telegram_id
 from bot.services.oxapay import OxaPayService
 from bot.config import config
@@ -52,7 +52,7 @@ async def show_referral(callback: CallbackQuery, db: Prisma, user: Optional[dict
     
     await callback.message.edit_text(
         format_referral_info(user.referralCode, referral_count, bonus_earned),
-        reply_markup=get_back_keyboard(),
+        reply_markup=get_referral_keyboard(user.referralCode),
         parse_mode="HTML"
     )
     await callback.answer()

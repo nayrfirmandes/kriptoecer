@@ -42,7 +42,7 @@ async def show_history_page(callback: CallbackQuery, db: Prisma, page: int = 1):
     
     if not transactions:
         await callback.message.edit_text(
-            "<b>Riwayat Transaksi</b>\n\nBelum ada transaksi.",
+            f"{Emoji.CLOCK} <b>Riwayat Transaksi Anda</b>\n\nAnda belum memiliki riwayat transaksi.",
             reply_markup=get_back_keyboard(),
             parse_mode="HTML"
         )
@@ -57,7 +57,7 @@ async def show_history_page(callback: CallbackQuery, db: Prisma, page: int = 1):
         "REFERRAL_BONUS": "Bonus",
     }
     
-    history_text = "<b>Riwayat Transaksi</b>\n\n"
+    history_text = f"{Emoji.CLOCK} <b>Riwayat Transaksi Anda</b>\n\n"
     
     for tx in transactions:
         label = type_label.get(tx.type, tx.type)
@@ -73,7 +73,7 @@ async def show_history_page(callback: CallbackQuery, db: Prisma, page: int = 1):
         
         history_text += f"{status_symbol} {label}: Rp {tx.amount:,.0f}\n   <i>{date_str}</i>\n"
     
-    history_text += f"\n<i>Halaman {page}/{total_pages}</i>"
+    history_text += f"\n<i>Menampilkan halaman {page} dari {total_pages}</i>"
     
     await callback.message.edit_text(
         history_text,
