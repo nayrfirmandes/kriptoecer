@@ -6,12 +6,12 @@ import random
 WIB = timezone(timedelta(hours=7))
 
 QUOTES = [
-    "Transaksi crypto cepat, aman, terpercaya.",
-    "Partner terbaik untuk trading Anda.",
-    "Beli jual crypto mudah dan aman.",
     "Investasi crypto bersama kami sekarang.",
-    "Layanan crypto terbaik untuk Anda.",
-    "Trading crypto simpel dan menguntungkan.",
+    "Transaksi crypto cepat aman terpercaya.",
+    "Beli jual crypto dengan mudah aman.",
+    "Partner trading crypto terbaik Anda.",
+    "Layanan crypto terpercaya untuk Anda.",
+    "Trading crypto simpel menguntungkan.",
 ]
 
 
@@ -101,7 +101,9 @@ def format_main_menu(balance: Decimal, name: str, telegram_id: int) -> str:
 
 💰 Saldo: <b>{balance}</b>
 
-<i>{quote}</i>""".format(
+<i>{quote}</i>
+
+<i>⚠️ Pastikan menggunakan bot official @kriptoecerbot</i>""".format(
         greeting=greeting,
         name=name,
         telegram_id=telegram_id,
