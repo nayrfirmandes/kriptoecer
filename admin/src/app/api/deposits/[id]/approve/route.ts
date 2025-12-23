@@ -21,24 +21,37 @@ export async function POST(
       return NextResponse.json({ error: 'Deposit already processed' }, { status: 400 })
     }
 
-    await prisma.$transaction([
-      prisma.deposit.update({
-        where: { id },
-        data: { status: 'COMPLETED' },
-      }),
-      prisma.balance.update({
-        where: { userId: deposit.userId },
-        data: { amount: { increment: deposit.amount } },
-      }),
-      prisma.transaction.updateMany({
-        where: { 
-          userId: deposit.userId,
-          type: 'TOPUP',
-          status: 'PENDING',
+    // Update deposit status
+    await prisma.deposit.update({
+      where: { id },
+      data: { status: 'COMPLETED' },
+    })
+
+    // Upsert balance (create if not exists, increment if exists)
+    await prisma.balance.upsert({
+      where: { userId: deposit.userId },
+      create: {
+        userId: deposit.userId,
+        amount: deposit.amount,
+      },
+      update: {
+        amount: { increment: deposit.amount },
+      },
+    })
+
+    // Update transaction linked to this deposit
+    await prisma.transaction.updateMany({
+      where: { 
+        userId: deposit.userId,
+        type: 'TOPUP',
+        status: 'PENDING',
+        metadata: {
+          path: ['depositId'],
+          equals: id,
         },
-        data: { status: 'COMPLETED' },
-      }),
-    ])
+      },
+      data: { status: 'COMPLETED' },
+    })
 
     return NextResponse.json({ success: true })
   } catch (error) {
