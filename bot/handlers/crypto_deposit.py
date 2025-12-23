@@ -293,7 +293,10 @@ async def check_crypto_payment(callback: CallbackQuery, state: FSMContext, db: P
 
 
 @router.callback_query(F.data.startswith("crypto_deposit:cancel:"))
-async def cancel_crypto_deposit(callback: CallbackQuery, state: FSMContext, db: Prisma, **kwargs):
+async def cancel_crypto_deposit(callback: CallbackQuery, state: FSMContext, db: Prisma, user: Optional[dict] = None, **kwargs):
+    from bot.formatters.messages import format_main_menu
+    from bot.keyboards.inline import get_main_menu_keyboard
+    
     deposit_id = callback.data.split(":")[-1]
     
     deposit = await db.deposit.find_unique(where={"id": deposit_id})
@@ -341,9 +344,19 @@ async def cancel_crypto_deposit(callback: CallbackQuery, state: FSMContext, db: 
     
     await state.clear()
     
-    await callback.message.edit_text(
-        f"{Emoji.CROSS} Deposit dibatalkan.",
-        reply_markup=get_back_keyboard(),
-        parse_mode="HTML"
-    )
+    try:
+        await callback.message.delete()
+    except:
+        pass
+    
+    if user and user.status == "ACTIVE":
+        balance = user.balance.amount if user.balance else 0
+        name = user.firstName or user.username or "User"
+        
+        await callback.message.answer(
+            format_main_menu(balance, name, callback.from_user.id),
+            reply_markup=get_main_menu_keyboard(),
+            parse_mode="HTML"
+        )
+    
     await callback.answer()
