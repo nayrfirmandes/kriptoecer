@@ -1,6 +1,6 @@
 from decimal import Decimal
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from aiogram.utils.keyboard import InlineKeyboardBuilder
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
+from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 from typing import Optional
 
 
@@ -45,9 +45,24 @@ def get_skip_referral_keyboard() -> InlineKeyboardMarkup:
     return builder.as_markup()
 
 
-def get_location_keyboard() -> InlineKeyboardMarkup:
-    builder = InlineKeyboardBuilder()
-    return builder.as_markup()
+def get_location_keyboard() -> ReplyKeyboardMarkup:
+    builder = ReplyKeyboardBuilder()
+    builder.row(
+        KeyboardButton(text="📍 Bagikan Lokasi", request_location=True)
+    )
+    return builder.as_markup(resize_keyboard=True, one_time_keyboard=True)
+
+
+def get_phone_keyboard() -> ReplyKeyboardMarkup:
+    builder = ReplyKeyboardBuilder()
+    builder.row(
+        KeyboardButton(text="📱 Bagikan Nomor HP", request_contact=True)
+    )
+    return builder.as_markup(resize_keyboard=True, one_time_keyboard=True)
+
+
+def get_remove_keyboard() -> ReplyKeyboardRemove:
+    return ReplyKeyboardRemove()
 
 
 def get_main_menu_keyboard() -> InlineKeyboardMarkup:

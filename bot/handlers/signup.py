@@ -18,6 +18,9 @@ from bot.keyboards.inline import (
     get_terms_keyboard,
     get_skip_referral_keyboard,
     get_main_menu_keyboard,
+    get_phone_keyboard,
+    get_location_keyboard,
+    get_remove_keyboard,
     CallbackData,
 )
 from bot.utils.helpers import (
@@ -79,17 +82,35 @@ async def process_email(message: Message, state: FSMContext, **kwargs):
     
     await message.answer(
         format_signup_whatsapp(),
+        reply_markup=get_phone_keyboard(),
+        parse_mode="HTML"
+    )
+
+
+@router.message(SignupStates.waiting_whatsapp, F.content_type == ContentType.CONTACT)
+async def process_whatsapp_contact(message: Message, state: FSMContext, **kwargs):
+    contact = message.contact
+    phone = contact.phone_number
+    
+    normalized = normalize_phone(phone)
+    await state.update_data(whatsapp=normalized)
+    await state.set_state(SignupStates.waiting_location)
+    
+    await message.answer(
+        format_signup_location(),
+        reply_markup=get_location_keyboard(),
         parse_mode="HTML"
     )
 
 
 @router.message(SignupStates.waiting_whatsapp)
 async def process_whatsapp(message: Message, state: FSMContext, **kwargs):
-    phone = message.text.strip()
+    phone = message.text.strip() if message.text else ""
     
     if not validate_phone(phone):
         await message.answer(
-            format_error("Format nomor tidak valid. Gunakan format 08xxx atau 628xxx."),
+            format_error("Format nomor tidak valid. Gunakan tombol atau ketik format 08xxx/628xxx."),
+            reply_markup=get_phone_keyboard(),
             parse_mode="HTML"
         )
         return
@@ -100,6 +121,7 @@ async def process_whatsapp(message: Message, state: FSMContext, **kwargs):
     
     await message.answer(
         format_signup_location(),
+        reply_markup=get_location_keyboard(),
         parse_mode="HTML"
     )
 
@@ -116,6 +138,11 @@ async def process_location(message: Message, state: FSMContext, **kwargs):
     
     await message.answer(
         format_signup_referral(),
+        reply_markup=get_remove_keyboard(),
+        parse_mode="HTML"
+    )
+    await message.answer(
+        "Masukkan kode referral atau lewati:",
         reply_markup=get_skip_referral_keyboard(),
         parse_mode="HTML"
     )
@@ -124,8 +151,8 @@ async def process_location(message: Message, state: FSMContext, **kwargs):
 @router.message(SignupStates.waiting_location)
 async def process_location_text(message: Message, **kwargs):
     await message.answer(
-        "📍 Silakan bagikan lokasi Anda menggunakan fitur 'Share Location' di Telegram.\n\n"
-        "Klik ikon 📎 (attachment) → Location → Share My Location",
+        "📍 Silakan tekan tombol di bawah untuk bagikan lokasi:",
+        reply_markup=get_location_keyboard(),
         parse_mode="HTML"
     )
 
