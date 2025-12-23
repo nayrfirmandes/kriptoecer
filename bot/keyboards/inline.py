@@ -26,6 +26,7 @@ class CallbackData:
     BACK_MENU = "back:menu"
     BACK = "back"
     CANCEL = "cancel"
+    CANCEL_DELETE = "cancel:delete_and_menu"
 
 
 def get_terms_keyboard() -> InlineKeyboardMarkup:
@@ -283,10 +284,10 @@ def get_referral_keyboard(ref_code: str, bot_username: str = "kriptoecerbot") ->
     return builder.as_markup()
 
 
-def get_cancel_keyboard(back_callback: str = CallbackData.BACK_MENU) -> InlineKeyboardMarkup:
+def get_cancel_keyboard(back_callback: str = CallbackData.CANCEL_DELETE) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
-        InlineKeyboardButton(text="❌ Batal", callback_data=back_callback),
+        InlineKeyboardButton(text="❌ Batal", callback_data=CallbackData.CANCEL_DELETE),
     )
     return builder.as_markup()
 

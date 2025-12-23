@@ -85,3 +85,32 @@ async def back_to_menu(callback: CallbackQuery, state: FSMContext, db: Prisma, u
         parse_mode="HTML"
     )
     await callback.answer()
+
+
+@router.callback_query(F.data == CallbackData.CANCEL_DELETE)
+async def cancel_and_show_menu(callback: CallbackQuery, state: FSMContext, db: Prisma, user: Optional[dict] = None, **kwargs):
+    await state.clear()
+    
+    try:
+        await callback.message.delete()
+    except:
+        pass
+    
+    if not user or user.status != "ACTIVE":
+        await callback.message.answer(
+            format_welcome(),
+            reply_markup=get_terms_keyboard(),
+            parse_mode="HTML"
+        )
+        await callback.answer()
+        return
+    
+    balance = user.balance.amount if user.balance else 0
+    name = user.firstName or user.username or "User"
+    
+    await callback.message.answer(
+        format_main_menu(balance, name, callback.from_user.id),
+        reply_markup=get_main_menu_keyboard(),
+        parse_mode="HTML"
+    )
+    await callback.answer()
