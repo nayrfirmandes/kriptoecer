@@ -3,7 +3,7 @@ from typing import Optional
 from aiogram import Router, F
 from aiogram.types import CallbackQuery
 from aiogram.fsm.context import FSMContext
-from prisma_client import Prisma
+from prisma import Prisma
 
 from bot.formatters.messages import format_referral_info, format_rates, format_profile, Emoji
 from bot.keyboards.inline import CallbackData, get_back_keyboard, get_referral_keyboard

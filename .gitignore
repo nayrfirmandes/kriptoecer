@@ -44,7 +44,6 @@ out/
 # Prisma
 prisma/*.db
 prisma/*.db-journal
-# Note: prisma_client/ is NOT ignored - it needs to be committed for Vercel deployment
 
 # Logs
 *.log
@@ -53,21 +52,3 @@ logs/
 # OS
 .DS_Store
 Thumbs.db
-
-# Vercel
-.vercel/
-
-# Replit
-.replit
-replit.nix
-.pythonlibs/
-.upm/
-.config/
-.cache/
-poetry.lock
-
-# Attached assets (user uploads)
-attached_assets/
-
-# Temp files
-/tmp/

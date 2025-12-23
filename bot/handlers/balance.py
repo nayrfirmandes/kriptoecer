@@ -1,7 +1,7 @@
 from typing import Optional
 from aiogram import Router, F
 from aiogram.types import CallbackQuery
-from prisma_client import Prisma
+from prisma import Prisma
 
 from bot.formatters.messages import format_balance
 from bot.keyboards.inline import CallbackData, get_balance_keyboard

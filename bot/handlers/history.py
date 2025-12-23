@@ -1,6 +1,6 @@
 from aiogram import Router, F
 from aiogram.types import CallbackQuery
-from prisma_client import Prisma
+from prisma import Prisma
 
 from bot.formatters.messages import Emoji, format_wib_datetime
 from bot.keyboards.inline import CallbackData, get_history_pagination_keyboard, get_back_keyboard

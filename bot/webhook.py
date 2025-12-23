@@ -2,7 +2,7 @@ import logging
 import json
 from decimal import Decimal
 from aiohttp import web
-from prisma_client import Prisma
+from prisma import Prisma
 
 from bot.services.oxapay import OxaPayService
 from bot.db.queries import update_balance

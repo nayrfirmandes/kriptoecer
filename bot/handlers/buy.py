@@ -5,7 +5,7 @@ from aiogram import Router, F
 from aiogram.types import CallbackQuery, Message
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from prisma_client import Prisma
+from prisma import Prisma
 
 from bot.formatters.messages import (
     format_buy_menu,
