@@ -1,5 +1,48 @@
 from decimal import Decimal
+from datetime import datetime, timezone, timedelta
 from typing import Optional
+import random
+
+WIB = timezone(timedelta(hours=7))
+
+FRIENDLY_QUOTES = [
+    "Trading crypto jadi lebih mudah bersama kami!",
+    "Harga terbaik, proses tercepat.",
+    "Transaksi aman, profit maksimal.",
+    "Mulai investasi crypto Anda hari ini!",
+    "Partner terpercaya untuk trading crypto.",
+    "Simple, cepat, dan aman.",
+    "Crypto untuk semua orang.",
+    "Raih peluang di dunia crypto!",
+]
+
+
+def get_wib_greeting() -> str:
+    now = datetime.now(WIB)
+    hour = now.hour
+    if 5 <= hour < 11:
+        return "Selamat pagi"
+    elif 11 <= hour < 15:
+        return "Selamat siang"
+    elif 15 <= hour < 18:
+        return "Selamat sore"
+    else:
+        return "Selamat malam"
+
+
+def get_wib_time() -> datetime:
+    return datetime.now(WIB)
+
+
+def format_wib_datetime(dt: datetime) -> str:
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    wib_dt = dt.astimezone(WIB)
+    return wib_dt.strftime("%d/%m/%Y %H:%M WIB")
+
+
+def get_random_quote() -> str:
+    return random.choice(FRIENDLY_QUOTES)
 
 
 class Emoji:
@@ -48,24 +91,25 @@ Dengan menggunakan layanan ini, Anda menyetujui:
 {warning} Pastikan Anda memahami risiko trading crypto.""".format(warning=Emoji.WARNING)
 
 
-def format_main_menu(balance: Decimal, name: str) -> str:
-    return """<b>KriptoEcer Bot</b> {coin}
+def format_main_menu(balance: Decimal, name: str, telegram_id: int) -> str:
+    greeting = get_wib_greeting()
+    quote = get_random_quote()
+    
+    return """<b>{greeting}, {name}!</b> {coin}
+<code>ID: {telegram_id}</code>
 
-Selamat datang, <b>{name}</b>!
+{money} Saldo: <b>{balance}</b>
 
-{money} <b>Saldo Anda</b>
-<code>{balance}</code>
+<i>"{quote}"</i>
 
-{dot} Beli/Jual crypto dengan harga terbaik
-{dot} Deposit & withdraw cepat dan aman
-{dot} Dapatkan bonus dari program referral
-
-Pilih menu di bawah untuk mulai:""".format(
+Pilih menu:""".format(
         coin=Emoji.COIN,
         money=Emoji.MONEY,
-        dot=Emoji.DOT,
+        greeting=greeting,
         name=name,
-        balance=format_currency(balance)
+        telegram_id=telegram_id,
+        balance=format_currency(balance),
+        quote=quote
     )
 
 

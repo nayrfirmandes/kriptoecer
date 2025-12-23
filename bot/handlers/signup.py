@@ -223,7 +223,7 @@ async def complete_signup(message: Message, state: FSMContext, db: Prisma):
     name = user.firstName or user.username or "User"
     
     await message.answer(
-        format_main_menu(balance, name),
+        format_main_menu(balance, name, message.from_user.id),
         reply_markup=get_main_menu_keyboard(),
         parse_mode="HTML"
     )
@@ -272,7 +272,7 @@ async def complete_signup_callback(callback: CallbackQuery, state: FSMContext, d
     name = user.firstName or user.username or "User"
     
     await callback.message.answer(
-        format_main_menu(balance, name),
+        format_main_menu(balance, name, callback.from_user.id),
         reply_markup=get_main_menu_keyboard(),
         parse_mode="HTML"
     )

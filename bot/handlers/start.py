@@ -51,7 +51,7 @@ async def cmd_start(message: Message, state: FSMContext, db: Prisma, user: Optio
         name = user.firstName or user.username or "User"
         
         await message.answer(
-            format_main_menu(balance, name),
+            format_main_menu(balance, name, message.from_user.id),
             reply_markup=get_main_menu_keyboard(),
             parse_mode="HTML"
         )
@@ -80,7 +80,7 @@ async def back_to_menu(callback: CallbackQuery, state: FSMContext, db: Prisma, u
     name = user.firstName or user.username or "User"
     
     await callback.message.edit_text(
-        format_main_menu(balance, name),
+        format_main_menu(balance, name, callback.from_user.id),
         reply_markup=get_main_menu_keyboard(),
         parse_mode="HTML"
     )
