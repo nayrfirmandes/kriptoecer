@@ -92,12 +92,14 @@ def format_main_menu(balance: Decimal, name: str, telegram_id: int) -> str:
     quote = get_quote()
     
     return """{greeting}, <b>{name}</b>!
+<code>ID: {telegram_id}</code>
 
 💰 Saldo: <b>{balance}</b>
 
 <i>{quote}</i>""".format(
         greeting=greeting,
         name=name,
+        telegram_id=telegram_id,
         balance=format_currency(balance),
         quote=quote
     )
