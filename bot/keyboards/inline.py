@@ -27,7 +27,7 @@ def get_terms_keyboard() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
         InlineKeyboardButton(
-            text="✅ Setuju & Daftar",
+            text="Setuju & Daftar",
             callback_data=CallbackData.AGREE_TERMS
         )
     )
@@ -38,7 +38,7 @@ def get_skip_referral_keyboard() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
         InlineKeyboardButton(
-            text="⏭️ Lewati",
+            text="Lewati",
             callback_data=CallbackData.SKIP_REFERRAL
         )
     )
@@ -48,7 +48,7 @@ def get_skip_referral_keyboard() -> InlineKeyboardMarkup:
 def get_location_keyboard() -> ReplyKeyboardMarkup:
     builder = ReplyKeyboardBuilder()
     builder.row(
-        KeyboardButton(text="📍 Bagikan Lokasi", request_location=True)
+        KeyboardButton(text="Bagikan Lokasi", request_location=True)
     )
     return builder.as_markup(resize_keyboard=True, one_time_keyboard=True)
 
@@ -56,7 +56,7 @@ def get_location_keyboard() -> ReplyKeyboardMarkup:
 def get_phone_keyboard() -> ReplyKeyboardMarkup:
     builder = ReplyKeyboardBuilder()
     builder.row(
-        KeyboardButton(text="📱 Bagikan Nomor HP", request_contact=True)
+        KeyboardButton(text="Bagikan Nomor HP", request_contact=True)
     )
     return builder.as_markup(resize_keyboard=True, one_time_keyboard=True)
 
@@ -68,23 +68,23 @@ def get_remove_keyboard() -> ReplyKeyboardRemove:
 def get_main_menu_keyboard() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
-        InlineKeyboardButton(text="🛒 Beli Crypto", callback_data=CallbackData.MENU_BUY),
-        InlineKeyboardButton(text="💸 Jual Crypto", callback_data=CallbackData.MENU_SELL),
+        InlineKeyboardButton(text="Beli Crypto", callback_data=CallbackData.MENU_BUY),
+        InlineKeyboardButton(text="Jual Crypto", callback_data=CallbackData.MENU_SELL),
     )
     builder.row(
-        InlineKeyboardButton(text="📊 Cek Harga", callback_data=CallbackData.MENU_RATES),
-        InlineKeyboardButton(text="💵 Saldo", callback_data=CallbackData.MENU_BALANCE),
+        InlineKeyboardButton(text="Cek Harga", callback_data=CallbackData.MENU_RATES),
+        InlineKeyboardButton(text="Saldo", callback_data=CallbackData.MENU_BALANCE),
     )
     builder.row(
-        InlineKeyboardButton(text="➕ Deposit", callback_data=CallbackData.MENU_TOPUP),
-        InlineKeyboardButton(text="➖ Withdraw", callback_data=CallbackData.MENU_WITHDRAW),
+        InlineKeyboardButton(text="Deposit", callback_data=CallbackData.MENU_TOPUP),
+        InlineKeyboardButton(text="Withdraw", callback_data=CallbackData.MENU_WITHDRAW),
     )
     builder.row(
-        InlineKeyboardButton(text="📜 Riwayat", callback_data=CallbackData.MENU_HISTORY),
-        InlineKeyboardButton(text="🎁 Referral", callback_data=CallbackData.MENU_REFERRAL),
+        InlineKeyboardButton(text="Riwayat", callback_data=CallbackData.MENU_HISTORY),
+        InlineKeyboardButton(text="Referral", callback_data=CallbackData.MENU_REFERRAL),
     )
     builder.row(
-        InlineKeyboardButton(text="❓ Bantuan", callback_data=CallbackData.MENU_HELP),
+        InlineKeyboardButton(text="Bantuan", callback_data=CallbackData.MENU_HELP),
     )
     return builder.as_markup()
 
@@ -153,11 +153,11 @@ def get_confirm_keyboard(action: str, order_id: str) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
         InlineKeyboardButton(
-            text="✅ Konfirmasi",
+            text="Konfirmasi",
             callback_data=f"{action}:confirm:{order_id}"
         ),
         InlineKeyboardButton(
-            text="❌ Batal",
+            text="Batal",
             callback_data=f"{action}:cancel:{order_id}"
         ),
     )
@@ -185,13 +185,13 @@ def get_topup_confirm_keyboard(deposit_id: str) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
         InlineKeyboardButton(
-            text="✅ Sudah Transfer",
+            text="Sudah Transfer",
             callback_data=f"topup:confirm:{deposit_id}"
         ),
     )
     builder.row(
         InlineKeyboardButton(
-            text="❌ Batal",
+            text="Batal",
             callback_data=f"topup:cancel:{deposit_id}"
         ),
     )

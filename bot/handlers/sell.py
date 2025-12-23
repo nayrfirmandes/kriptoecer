@@ -141,10 +141,10 @@ async def select_sell_network(callback: CallbackQuery, state: FSMContext, db: Pr
     await state.set_state(SellStates.entering_amount)
     
     await callback.message.edit_text(
-        f"{Emoji.SELL} <b>Jual {coin} ({network})</b>\n\n"
-        f"{Emoji.CHART} Rate: <b>Rp {rate_with_margin:,.0f}</b> / {coin}\n"
-        f"{Emoji.INFO} Termasuk margin {margin}%\n\n"
-        f"Masukkan jumlah <b>{coin}</b> yang ingin dijual:\n"
+        f"<b>Jual {coin}</b> ({network})\n\n"
+        f"Rate: <b>Rp {rate_with_margin:,.0f}</b> / {coin}\n"
+        f"<i>Sudah termasuk margin {margin}%</i>\n\n"
+        f"Masukkan jumlah {coin}:\n"
         f"<i>Contoh: 0.001</i>",
         reply_markup=get_cancel_keyboard("sell:back"),
         parse_mode="HTML"

@@ -60,31 +60,26 @@ async def show_referral(callback: CallbackQuery, db: Prisma, user: Optional[dict
 
 @router.callback_query(F.data == CallbackData.MENU_HELP)
 async def show_help(callback: CallbackQuery, **kwargs):
-    help_text = f"""
-{Emoji.HELP} <b>Bantuan</b>
+    help_text = """<b>Bantuan</b>
 
-{Emoji.INFO} <b>Cara Menggunakan Bot:</b>
+<b>Cara Menggunakan:</b>
 
-1️⃣ <b>Top Up Saldo</b>
-   Transfer ke rekening/e-wallet kami, konfirmasi, tunggu approval.
+1. <b>Top Up Saldo</b>
+   Transfer ke rekening kami, konfirmasi, tunggu approval.
 
-2️⃣ <b>Beli Crypto</b>
-   Pilih coin → Masukkan jumlah → Konfirmasi → Crypto terkirim ke wallet Anda.
+2. <b>Beli Crypto</b>
+   Pilih coin {arrow} Masukkan jumlah {arrow} Konfirmasi.
 
-3️⃣ <b>Jual Crypto</b>
-   Pilih coin → Kirim ke address kami → Saldo bertambah.
+3. <b>Jual Crypto</b>
+   Pilih coin {arrow} Kirim ke address kami {arrow} Saldo bertambah.
 
-4️⃣ <b>Withdraw Saldo</b>
-   Request withdraw → Tunggu proses → Dana terkirim.
+4. <b>Withdraw</b>
+   Request withdraw {arrow} Tunggu proses {arrow} Dana terkirim.
 
-{Emoji.PHONE} <b>Hubungi Support:</b>
-WhatsApp: +62xxx (hubungi admin)
-
-{Emoji.WARNING} <b>Penting:</b>
-- Pastikan alamat wallet benar sebelum transaksi
-- Transaksi crypto bersifat final
-- Simpan bukti transaksi Anda
-"""
+<b>Penting:</b>
+{dot} Pastikan alamat wallet benar
+{dot} Transaksi crypto bersifat final
+{dot} Simpan bukti transaksi""".format(arrow=Emoji.ARROW, dot=Emoji.DOT)
     
     await callback.message.edit_text(
         help_text,

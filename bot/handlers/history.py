@@ -2,7 +2,7 @@ from aiogram import Router, F
 from aiogram.types import CallbackQuery
 from prisma import Prisma
 
-from bot.formatters.messages import format_history_item, Emoji
+from bot.formatters.messages import Emoji
 from bot.keyboards.inline import CallbackData, get_history_pagination_keyboard, get_back_keyboard
 from bot.db.queries import get_user_by_telegram_id, get_user_transactions, count_user_transactions
 
@@ -42,21 +42,12 @@ async def show_history_page(callback: CallbackQuery, db: Prisma, page: int = 1):
     
     if not transactions:
         await callback.message.edit_text(
-            f"{Emoji.HISTORY} <b>Riwayat Transaksi</b>\n\n"
-            f"{Emoji.INFO} Belum ada transaksi.",
+            "<b>Riwayat Transaksi</b>\n\nBelum ada transaksi.",
             reply_markup=get_back_keyboard(),
             parse_mode="HTML"
         )
         await callback.answer()
         return
-    
-    type_emoji = {
-        "BUY": Emoji.BUY,
-        "SELL": Emoji.SELL,
-        "TOPUP": Emoji.TOPUP,
-        "WITHDRAW": Emoji.WITHDRAW,
-        "REFERRAL_BONUS": Emoji.REFERRAL,
-    }
     
     type_label = {
         "BUY": "Beli",
@@ -66,25 +57,23 @@ async def show_history_page(callback: CallbackQuery, db: Prisma, page: int = 1):
         "REFERRAL_BONUS": "Bonus",
     }
     
-    history_text = f"{Emoji.HISTORY} <b>Riwayat Transaksi</b>\n\n"
+    history_text = "<b>Riwayat Transaksi</b>\n\n"
     
     for tx in transactions:
-        emoji = type_emoji.get(tx.type, Emoji.INFO)
         label = type_label.get(tx.type, tx.type)
-        status_emoji = {
-            "PENDING": Emoji.PENDING,
-            "PROCESSING": Emoji.PROCESSING,
-            "COMPLETED": Emoji.SUCCESS,
-            "FAILED": Emoji.ERROR,
-            "CANCELLED": Emoji.ERROR,
-        }.get(tx.status, Emoji.INFO)
+        status_symbol = {
+            "PENDING": "○",
+            "PROCESSING": "◐",
+            "COMPLETED": Emoji.CHECK,
+            "FAILED": Emoji.CROSS,
+            "CANCELLED": Emoji.CROSS,
+        }.get(tx.status, "○")
         
-        date_str = tx.createdAt.strftime("%d/%m/%Y %H:%M")
+        date_str = tx.createdAt.strftime("%d/%m %H:%M")
         
-        history_text += f"{status_emoji} {emoji} {label}: Rp {tx.amount:,.0f}\n"
-        history_text += f"   <i>{date_str}</i>\n\n"
+        history_text += f"{status_symbol} {label}: Rp {tx.amount:,.0f} <i>({date_str})</i>\n"
     
-    history_text += f"\nHalaman {page}/{total_pages}"
+    history_text += f"\n<i>Halaman {page}/{total_pages}</i>"
     
     await callback.message.edit_text(
         history_text,

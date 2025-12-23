@@ -210,8 +210,8 @@ async def process_buy_amount(message: Message, state: FSMContext, db: Prisma, us
     await state.set_state(BuyStates.entering_wallet)
     
     await message.answer(
-        f"{Emoji.WALLET} <b>Alamat Wallet</b>\n\n"
-        f"Masukkan alamat wallet {data['coin']} ({data['network']}) Anda:",
+        f"<b>Alamat Wallet</b>\n\n"
+        f"Masukkan alamat wallet {data['coin']} ({data['network']}):",
         reply_markup=get_cancel_keyboard("buy:back"),
         parse_mode="HTML"
     )
@@ -330,8 +330,8 @@ async def confirm_buy(callback: CallbackQuery, state: FSMContext, db: Prisma, us
             
             await callback.message.edit_text(
                 format_transaction_success("Beli Crypto", total_idr) + 
-                f"\n\n{Emoji.CRYPTO} Anda menerima: {data['crypto_amount']:.8f} {data['coin']}\n"
-                f"{Emoji.WALLET} Ke: <code>{data['wallet_address'][:20]}...</code>",
+                f"\n\nAnda menerima: <b>{data['crypto_amount']:.8f} {data['coin']}</b>\n"
+                f"Ke: <code>{data['wallet_address'][:20]}...</code>",
                 reply_markup=get_back_keyboard(),
                 parse_mode="HTML"
             )
@@ -370,7 +370,7 @@ async def cancel_buy(callback: CallbackQuery, state: FSMContext, **kwargs):
     await state.clear()
     
     await callback.message.edit_text(
-        f"{Emoji.ERROR} Pembelian dibatalkan.",
+        "Pembelian dibatalkan.",
         reply_markup=get_back_keyboard(),
         parse_mode="HTML"
     )

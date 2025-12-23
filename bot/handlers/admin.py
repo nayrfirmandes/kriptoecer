@@ -26,17 +26,17 @@ async def admin_menu(message: Message, db: Prisma, **kwargs):
     active_users = await db.user.count(where={"status": "ACTIVE"})
     
     await message.answer(
-        f"{Emoji.SETTINGS} <b>Admin Panel</b>\n\n"
-        f"{Emoji.USER} Total Users: {total_users} (Active: {active_users})\n"
-        f"{Emoji.TOPUP} Pending Top Up: {pending_deposits}\n"
-        f"{Emoji.WITHDRAW} Pending Withdraw: {pending_withdrawals}\n\n"
-        f"Commands:\n"
-        f"/pending_topup - Lihat pending top up\n"
-        f"/pending_withdraw - Lihat pending withdraw\n"
-        f"/approve_topup [id] - Approve top up\n"
-        f"/reject_topup [id] - Reject top up\n"
-        f"/approve_withdraw [id] - Approve withdraw\n"
-        f"/reject_withdraw [id] - Reject withdraw",
+        f"<b>Admin Panel</b>\n\n"
+        f"{Emoji.DOT} Users: {total_users} (Active: {active_users})\n"
+        f"{Emoji.DOT} Pending Top Up: {pending_deposits}\n"
+        f"{Emoji.DOT} Pending Withdraw: {pending_withdrawals}\n\n"
+        f"<b>Commands:</b>\n"
+        f"/pending_topup\n"
+        f"/pending_withdraw\n"
+        f"/approve_topup [id]\n"
+        f"/reject_topup [id]\n"
+        f"/approve_withdraw [id]\n"
+        f"/reject_withdraw [id]",
         parse_mode="HTML"
     )
 
@@ -54,10 +54,10 @@ async def pending_topup(message: Message, db: Prisma, **kwargs):
     )
     
     if not deposits:
-        await message.answer(f"{Emoji.INFO} Tidak ada pending top up.")
+        await message.answer("Tidak ada pending top up.")
         return
     
-    text = f"{Emoji.TOPUP} <b>Pending Top Up</b>\n\n"
+    text = "<b>Pending Top Up</b>\n\n"
     
     for d in deposits:
         text += (
@@ -84,10 +84,10 @@ async def pending_withdraw(message: Message, db: Prisma, **kwargs):
     )
     
     if not withdrawals:
-        await message.answer(f"{Emoji.INFO} Tidak ada pending withdraw.")
+        await message.answer("Tidak ada pending withdraw.")
         return
     
-    text = f"{Emoji.WITHDRAW} <b>Pending Withdraw</b>\n\n"
+    text = "<b>Pending Withdraw</b>\n\n"
     
     for w in withdrawals:
         if w.bankName:
@@ -124,11 +124,11 @@ async def approve_topup(message: Message, db: Prisma, **kwargs):
     )
     
     if not deposit:
-        await message.answer(f"{Emoji.ERROR} Deposit tidak ditemukan.")
+        await message.answer("Deposit tidak ditemukan.")
         return
     
     if deposit.status != "PENDING":
-        await message.answer(f"{Emoji.ERROR} Deposit sudah diproses.")
+        await message.answer("Deposit sudah diproses.")
         return
     
     await db.deposit.update(
@@ -144,7 +144,7 @@ async def approve_topup(message: Message, db: Prisma, **kwargs):
     )
     
     await message.answer(
-        f"{Emoji.SUCCESS} Top up approved!\n"
+        f"{Emoji.CHECK} Top up approved!\n"
         f"User: {deposit.user.firstName or deposit.user.username}\n"
         f"Amount: Rp {deposit.amount:,.0f}"
     )
@@ -152,7 +152,7 @@ async def approve_topup(message: Message, db: Prisma, **kwargs):
     try:
         await message.bot.send_message(
             deposit.user.telegramId,
-            f"{Emoji.SUCCESS} <b>Top Up Berhasil!</b>\n\n"
+            f"<b>Top Up Berhasil</b> {Emoji.CHECK}\n\n"
             f"Saldo Anda telah ditambah <b>Rp {deposit.amount:,.0f}</b>",
             parse_mode="HTML"
         )
@@ -178,11 +178,11 @@ async def reject_topup(message: Message, db: Prisma, **kwargs):
     )
     
     if not deposit:
-        await message.answer(f"{Emoji.ERROR} Deposit tidak ditemukan.")
+        await message.answer("Deposit tidak ditemukan.")
         return
     
     if deposit.status != "PENDING":
-        await message.answer(f"{Emoji.ERROR} Deposit sudah diproses.")
+        await message.answer("Deposit sudah diproses.")
         return
     
     await db.deposit.update(
@@ -195,14 +195,14 @@ async def reject_topup(message: Message, db: Prisma, **kwargs):
         data={"status": "FAILED"}
     )
     
-    await message.answer(f"{Emoji.SUCCESS} Top up rejected!")
+    await message.answer(f"{Emoji.CHECK} Top up rejected!")
     
     try:
         await message.bot.send_message(
             deposit.user.telegramId,
-            f"{Emoji.ERROR} <b>Top Up Ditolak</b>\n\n"
+            f"<b>Top Up Ditolak</b> {Emoji.CROSS}\n\n"
             f"Top up Rp {deposit.amount:,.0f} ditolak.\n"
-            f"Silakan hubungi admin untuk informasi lebih lanjut.",
+            f"Hubungi admin untuk info lebih lanjut.",
             parse_mode="HTML"
         )
     except Exception:
@@ -227,17 +227,17 @@ async def approve_withdraw(message: Message, db: Prisma, **kwargs):
     )
     
     if not withdrawal:
-        await message.answer(f"{Emoji.ERROR} Withdrawal tidak ditemukan.")
+        await message.answer("Withdrawal tidak ditemukan.")
         return
     
     if withdrawal.status != "PENDING":
-        await message.answer(f"{Emoji.ERROR} Withdrawal sudah diproses.")
+        await message.answer("Withdrawal sudah diproses.")
         return
     
     user_balance = await db.balance.find_unique(where={"userId": withdrawal.userId})
     
     if not user_balance or user_balance.amount < withdrawal.amount:
-        await message.answer(f"{Emoji.ERROR} Saldo user tidak cukup.")
+        await message.answer("Saldo user tidak cukup.")
         return
     
     await update_balance(db, withdrawal.userId, -withdrawal.amount)
@@ -253,7 +253,7 @@ async def approve_withdraw(message: Message, db: Prisma, **kwargs):
     )
     
     await message.answer(
-        f"{Emoji.SUCCESS} Withdraw approved!\n"
+        f"{Emoji.CHECK} Withdraw approved!\n"
         f"User: {withdrawal.user.firstName or withdrawal.user.username}\n"
         f"Amount: Rp {withdrawal.amount:,.0f}"
     )
@@ -261,7 +261,7 @@ async def approve_withdraw(message: Message, db: Prisma, **kwargs):
     try:
         await message.bot.send_message(
             withdrawal.user.telegramId,
-            f"{Emoji.SUCCESS} <b>Withdraw Berhasil!</b>\n\n"
+            f"<b>Withdraw Berhasil</b> {Emoji.CHECK}\n\n"
             f"Rp {withdrawal.amount:,.0f} telah dikirim ke rekening Anda.",
             parse_mode="HTML"
         )
@@ -287,11 +287,11 @@ async def reject_withdraw(message: Message, db: Prisma, **kwargs):
     )
     
     if not withdrawal:
-        await message.answer(f"{Emoji.ERROR} Withdrawal tidak ditemukan.")
+        await message.answer("Withdrawal tidak ditemukan.")
         return
     
     if withdrawal.status != "PENDING":
-        await message.answer(f"{Emoji.ERROR} Withdrawal sudah diproses.")
+        await message.answer("Withdrawal sudah diproses.")
         return
     
     await db.withdrawal.update(
@@ -304,14 +304,14 @@ async def reject_withdraw(message: Message, db: Prisma, **kwargs):
         data={"status": "FAILED"}
     )
     
-    await message.answer(f"{Emoji.SUCCESS} Withdraw rejected!")
+    await message.answer(f"{Emoji.CHECK} Withdraw rejected!")
     
     try:
         await message.bot.send_message(
             withdrawal.user.telegramId,
-            f"{Emoji.ERROR} <b>Withdraw Ditolak</b>\n\n"
+            f"<b>Withdraw Ditolak</b> {Emoji.CROSS}\n\n"
             f"Withdraw Rp {withdrawal.amount:,.0f} ditolak.\n"
-            f"Silakan hubungi admin untuk informasi lebih lanjut.",
+            f"Hubungi admin untuk info lebih lanjut.",
             parse_mode="HTML"
         )
     except Exception:

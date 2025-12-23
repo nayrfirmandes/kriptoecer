@@ -135,11 +135,11 @@ async def process_topup_amount(message: Message, state: FSMContext, db: Prisma, 
         try:
             await message.bot.send_message(
                 admin_id,
-                f"{Emoji.TOPUP} <b>Request Top Up Baru</b>\n\n"
-                f"{Emoji.USER} User: {user.firstName or user.username} (ID: {user.telegramId})\n"
-                f"{Emoji.MONEY} Jumlah: Rp {amount:,.0f}\n"
-                f"{Emoji.BANK} Via: {data['method_name']}\n\n"
-                f"ID Deposit: <code>{deposit.id}</code>",
+                f"<b>Request Top Up Baru</b>\n\n"
+                f"• User: {user.firstName or user.username} (ID: {user.telegramId})\n"
+                f"• Jumlah: Rp {amount:,.0f}\n"
+                f"• Via: {data['method_name']}\n\n"
+                f"ID: <code>{deposit.id}</code>",
                 parse_mode="HTML"
             )
         except Exception:
@@ -169,7 +169,7 @@ async def cancel_topup(callback: CallbackQuery, state: FSMContext, db: Prisma, *
     await state.clear()
     
     await callback.message.edit_text(
-        f"{Emoji.ERROR} Top up dibatalkan.",
+        "Top up dibatalkan.",
         reply_markup=get_back_keyboard(),
         parse_mode="HTML"
     )
