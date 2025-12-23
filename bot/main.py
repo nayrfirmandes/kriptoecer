@@ -26,7 +26,7 @@ async def main():
         return
     
     if not config.database.url:
-        logger.error("DATABASE_URL is not set!")
+        logger.error("BOT_DATABASE is not set!")
         return
     
     prisma = Prisma()

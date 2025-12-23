@@ -41,7 +41,7 @@ def load_config() -> AppConfig:
             admin_ids=admin_ids,
         ),
         database=DatabaseConfig(
-            url=os.getenv("DATABASE_URL", ""),
+            url=os.getenv("BOT_DATABASE", ""),
         ),
         oxapay=OxaPayConfig(
             merchant_api_key=os.getenv("OXAPAY_MERCHANT_API_KEY", ""),
