@@ -1,3 +1,4 @@
+from decimal import Decimal
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from typing import Optional
@@ -109,15 +110,22 @@ def get_coins_keyboard(coins: list[dict], action: str) -> InlineKeyboardMarkup:
     return builder.as_markup()
 
 
-def get_networks_keyboard(networks: list[dict], coin: str, action: str) -> InlineKeyboardMarkup:
+def get_networks_keyboard(networks: list[dict], coin: str, action: str, rate_idr: Optional[Decimal] = None) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     
     for net in networks:
         network = net["network"]
-        fee = net.get("withdraw_fee", 0)
+        fee = net.get("withdraw_fee", Decimal("0"))
+        
+        if rate_idr and fee:
+            fee_idr = Decimal(str(fee)) * rate_idr
+            fee_text = f"Fee: Rp {fee_idr:,.0f}"
+        else:
+            fee_text = f"Fee: {fee} {coin}"
+        
         builder.row(
             InlineKeyboardButton(
-                text=f"🔗 {network} (Fee: {fee} {coin})",
+                text=f"🔗 {network} ({fee_text})",
                 callback_data=f"{action}:network:{coin}:{network}"
             )
         )

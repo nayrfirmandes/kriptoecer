@@ -88,6 +88,7 @@ async def select_buy_coin(callback: CallbackQuery, state: FSMContext, **kwargs):
     
     try:
         networks = await oxapay.get_coin_networks(coin)
+        rate_usd = await oxapay.get_exchange_rate(coin, "USD")
     finally:
         await oxapay.close()
     
@@ -95,12 +96,14 @@ async def select_buy_coin(callback: CallbackQuery, state: FSMContext, **kwargs):
         await callback.answer("Network tidak tersedia.", show_alert=True)
         return
     
+    rate_idr = rate_usd * USD_TO_IDR if rate_usd else None
+    
     await state.update_data(coin=coin)
     await state.set_state(BuyStates.selecting_network)
     
     await callback.message.edit_text(
         format_coin_networks(coin),
-        reply_markup=get_networks_keyboard(networks, coin, "buy"),
+        reply_markup=get_networks_keyboard(networks, coin, "buy", rate_idr),
         parse_mode="HTML"
     )
     await callback.answer()
