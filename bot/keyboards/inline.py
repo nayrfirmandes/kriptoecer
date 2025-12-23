@@ -61,7 +61,7 @@ def get_main_menu_keyboard() -> InlineKeyboardMarkup:
         InlineKeyboardButton(text="💵 Saldo", callback_data=CallbackData.MENU_BALANCE),
     )
     builder.row(
-        InlineKeyboardButton(text="➕ Top Up", callback_data=CallbackData.MENU_TOPUP),
+        InlineKeyboardButton(text="➕ Deposit", callback_data=CallbackData.MENU_TOPUP),
         InlineKeyboardButton(text="➖ Withdraw", callback_data=CallbackData.MENU_WITHDRAW),
     )
     builder.row(
@@ -77,7 +77,7 @@ def get_main_menu_keyboard() -> InlineKeyboardMarkup:
 def get_balance_keyboard() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
-        InlineKeyboardButton(text="➕ Top Up", callback_data=CallbackData.MENU_TOPUP),
+        InlineKeyboardButton(text="➕ Deposit", callback_data=CallbackData.MENU_TOPUP),
         InlineKeyboardButton(text="➖ Withdraw", callback_data=CallbackData.MENU_WITHDRAW),
     )
     builder.row(

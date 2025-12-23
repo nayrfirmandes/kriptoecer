@@ -268,7 +268,7 @@ def format_sell_confirm(
 
 def format_topup_menu() -> str:
     return f"""
-{Emoji.TOPUP} <b>Top Up Saldo</b>
+{Emoji.TOPUP} <b>Deposit Saldo</b>
 
 Pilih metode pembayaran:
 """
