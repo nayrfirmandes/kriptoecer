@@ -187,9 +187,9 @@ def get_settings_back_keyboard():
     
     builder = InlineKeyboardBuilder()
     builder.row(
-        InlineKeyboardButton(text="⚙️ Kembali ke Pengaturan", callback_data=CallbackData.MENU_SETTINGS),
+        InlineKeyboardButton(text="← Kembali ke Pengaturan", callback_data=CallbackData.MENU_SETTINGS),
     )
     builder.row(
-        InlineKeyboardButton(text="◀️ Menu Utama", callback_data=CallbackData.BACK_MENU),
+        InlineKeyboardButton(text="← Menu Utama", callback_data=CallbackData.BACK_MENU),
     )
     return builder.as_markup()

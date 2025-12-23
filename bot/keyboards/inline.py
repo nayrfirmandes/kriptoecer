@@ -186,7 +186,7 @@ def get_topup_methods_keyboard(methods: list[dict]) -> InlineKeyboardMarkup:
         )
     
     builder.row(
-        InlineKeyboardButton(text="Kembali", callback_data=CallbackData.BACK_MENU),
+        InlineKeyboardButton(text="← Kembali", callback_data=CallbackData.BACK_MENU),
     )
     return builder.as_markup()
 
@@ -215,7 +215,7 @@ def get_withdraw_methods_keyboard() -> InlineKeyboardMarkup:
         InlineKeyboardButton(text="E-Wallet", callback_data="withdraw:method:ewallet"),
     )
     builder.row(
-        InlineKeyboardButton(text="Kembali", callback_data=CallbackData.BACK_MENU),
+        InlineKeyboardButton(text="← Kembali", callback_data=CallbackData.BACK_MENU),
     )
     return builder.as_markup()
 
@@ -238,7 +238,7 @@ def get_ewallet_options_keyboard() -> InlineKeyboardMarkup:
         builder.row(*row)
     
     builder.row(
-        InlineKeyboardButton(text="Kembali", callback_data="withdraw:back"),
+        InlineKeyboardButton(text="← Kembali", callback_data="withdraw:back"),
     )
     return builder.as_markup()
 
@@ -329,6 +329,6 @@ def get_history_pagination_keyboard(
         builder.row(*nav_buttons)
     
     builder.row(
-        InlineKeyboardButton(text="Kembali", callback_data=CallbackData.BACK_MENU),
+        InlineKeyboardButton(text="← Kembali", callback_data=CallbackData.BACK_MENU),
     )
     return builder.as_markup()
