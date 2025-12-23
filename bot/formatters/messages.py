@@ -198,13 +198,14 @@ def format_buy_confirm(
     network_fee: Decimal,
     total: Decimal
 ) -> str:
+    network_fee_idr = network_fee * rate if network_fee > 0 else Decimal("0")
     return f"""
 {Emoji.BUY} <b>Konfirmasi Pembelian</b>
 
 {Emoji.CRYPTO} Coin: <b>{coin}</b> ({network})
-{Emoji.MONEY} Jumlah: <b>{format_currency(fiat_amount)}</b>
-{Emoji.CHART} Rate: <b>{format_currency(rate)}</b>
-{Emoji.MONEY} Network Fee: <b>{format_currency(network_fee, coin)}</b>
+{Emoji.MONEY} Jumlah Beli: <b>{format_currency(fiat_amount)}</b>
+{Emoji.CHART} Rate: <b>{format_currency(rate)}</b> per {coin}
+{Emoji.MONEY} Network Fee: <b>{format_currency(network_fee, coin)}</b> (~{format_currency(network_fee_idr)})
 
 {Emoji.SUCCESS} Anda akan menerima: <b>{format_currency(crypto_amount, coin)}</b>
 {Emoji.WALLET} Total dipotong dari saldo: <b>{format_currency(total)}</b>
@@ -225,15 +226,16 @@ def format_sell_confirm(
 {Emoji.SELL} <b>Konfirmasi Penjualan</b>
 
 {Emoji.CRYPTO} Coin: <b>{coin}</b> ({network})
-{Emoji.MONEY} Jumlah: <b>{format_currency(crypto_amount, coin)}</b>
-{Emoji.CHART} Rate: <b>{format_currency(rate)}</b>
+{Emoji.MONEY} Jumlah Jual: <b>{format_currency(crypto_amount, coin)}</b>
+{Emoji.CHART} Rate: <b>{format_currency(rate)}</b> per {coin}
 
-{Emoji.SUCCESS} Anda akan menerima: <b>{format_currency(fiat_amount)}</b>
+{Emoji.SUCCESS} Saldo akan bertambah: <b>{format_currency(fiat_amount)}</b>
 
-{Emoji.WALLET} Kirim crypto ke alamat ini:
+{Emoji.WALLET} Kirim <b>{format_currency(crypto_amount, coin)}</b> ke alamat ini:
 <code>{deposit_address}</code>
 
-{Emoji.WARNING} Pastikan network yang digunakan benar!
+{Emoji.WARNING} Pastikan network yang digunakan: <b>{network}</b>
+{Emoji.CLOCK} Saldo akan masuk setelah konfirmasi blockchain.
 """
 
 
