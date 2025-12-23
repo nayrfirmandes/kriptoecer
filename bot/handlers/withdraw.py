@@ -1,4 +1,5 @@
 from decimal import Decimal
+from typing import Optional
 from aiogram import Router, F
 from aiogram.types import CallbackQuery, Message
 from aiogram.fsm.context import FSMContext
@@ -21,7 +22,7 @@ from bot.keyboards.inline import (
     get_confirm_keyboard,
 )
 from bot.utils.helpers import parse_amount
-from bot.db.queries import get_user_by_telegram_id, create_withdrawal
+from bot.db.queries import create_withdrawal
 from bot.config import config
 
 router = Router()
@@ -40,9 +41,7 @@ class WithdrawStates(StatesGroup):
 
 
 @router.callback_query(F.data == CallbackData.MENU_WITHDRAW)
-async def show_withdraw_menu(callback: CallbackQuery, state: FSMContext, db: Prisma, **kwargs):
-    user = await get_user_by_telegram_id(db, callback.from_user.id)
-    
+async def show_withdraw_menu(callback: CallbackQuery, state: FSMContext, db: Prisma, user: Optional[dict] = None, **kwargs):
     if not user or user.status != "ACTIVE":
         await callback.answer("Silakan daftar terlebih dahulu.", show_alert=True)
         return
@@ -173,7 +172,7 @@ async def process_ewallet_number(message: Message, state: FSMContext, **kwargs):
 
 
 @router.message(WithdrawStates.entering_amount)
-async def process_withdraw_amount(message: Message, state: FSMContext, db: Prisma, **kwargs):
+async def process_withdraw_amount(message: Message, state: FSMContext, db: Prisma, user: Optional[dict] = None, **kwargs):
     amount = parse_amount(message.text)
     
     if not amount or amount < MIN_WITHDRAW:
@@ -184,7 +183,10 @@ async def process_withdraw_amount(message: Message, state: FSMContext, db: Prism
         )
         return
     
-    user = await get_user_by_telegram_id(db, message.from_user.id)
+    if not user:
+        await message.answer(format_error("User tidak ditemukan."), parse_mode="HTML")
+        return
+    
     balance = user.balance.amount if user.balance else Decimal("0")
     
     if amount > balance:
@@ -225,11 +227,14 @@ async def process_withdraw_amount(message: Message, state: FSMContext, db: Prism
 
 
 @router.callback_query(F.data == "withdraw:confirm:confirm")
-async def confirm_withdraw(callback: CallbackQuery, state: FSMContext, db: Prisma, **kwargs):
+async def confirm_withdraw(callback: CallbackQuery, state: FSMContext, db: Prisma, user: Optional[dict] = None, **kwargs):
     data = await state.get_data()
     amount = Decimal(str(data["amount"]))
     
-    user = await get_user_by_telegram_id(db, callback.from_user.id)
+    if not user:
+        await callback.answer("User tidak ditemukan.", show_alert=True)
+        return
+    
     balance = user.balance.amount if user.balance else Decimal("0")
     
     if amount > balance:

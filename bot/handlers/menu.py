@@ -1,4 +1,5 @@
 from decimal import Decimal
+from typing import Optional
 from aiogram import Router, F
 from aiogram.types import CallbackQuery
 from aiogram.fsm.context import FSMContext
@@ -6,7 +7,7 @@ from prisma import Prisma
 
 from bot.formatters.messages import format_referral_info, format_rates, Emoji
 from bot.keyboards.inline import CallbackData, get_back_keyboard
-from bot.db.queries import get_user_by_telegram_id, get_referral_count, get_referral_bonus_earned
+from bot.db.queries import get_referral_count, get_referral_bonus_earned
 from bot.services.oxapay import OxaPayService
 from bot.config import config
 
@@ -41,9 +42,7 @@ async def show_rates(callback: CallbackQuery, **kwargs):
 
 
 @router.callback_query(F.data == CallbackData.MENU_REFERRAL)
-async def show_referral(callback: CallbackQuery, db: Prisma, **kwargs):
-    user = await get_user_by_telegram_id(db, callback.from_user.id)
-    
+async def show_referral(callback: CallbackQuery, db: Prisma, user: Optional[dict] = None, **kwargs):
     if not user:
         await callback.answer("Silakan daftar terlebih dahulu.", show_alert=True)
         return

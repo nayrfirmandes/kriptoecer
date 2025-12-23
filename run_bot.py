@@ -27,26 +27,30 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-WEBHOOK_URL = os.getenv("WEBHOOK_URL", "")
-WEBHOOK_PATH = os.getenv("WEBHOOK_PATH", "/telegram/webhook")
-WEBHOOK_PORT = int(os.getenv("WEBHOOK_PORT", "5000"))
+WEBHOOK_PATH = "/telegram/webhook"
+WEBHOOK_PORT = 8080
 
 
 def setup_dispatcher(prisma: Prisma) -> Dispatcher:
     storage = MemoryStorage()
     dp = Dispatcher(storage=storage)
     
-    dp.message.middleware(LoggingMiddleware())
-    dp.callback_query.middleware(LoggingMiddleware())
+    logging_mw = LoggingMiddleware()
+    throttling_mw = ThrottlingMiddleware(rate_limit=0.1)
+    database_mw = DatabaseMiddleware(prisma)
+    user_status_mw = UserStatusMiddleware()
     
-    dp.message.middleware(ThrottlingMiddleware(rate_limit=0.3))
-    dp.callback_query.middleware(ThrottlingMiddleware(rate_limit=0.3))
+    dp.message.middleware(logging_mw)
+    dp.callback_query.middleware(logging_mw)
     
-    dp.message.middleware(DatabaseMiddleware(prisma))
-    dp.callback_query.middleware(DatabaseMiddleware(prisma))
+    dp.message.middleware(throttling_mw)
+    dp.callback_query.middleware(throttling_mw)
     
-    dp.message.middleware(UserStatusMiddleware())
-    dp.callback_query.middleware(UserStatusMiddleware())
+    dp.message.middleware(database_mw)
+    dp.callback_query.middleware(database_mw)
+    
+    dp.message.middleware(user_status_mw)
+    dp.callback_query.middleware(user_status_mw)
     
     router = setup_routers()
     dp.include_router(router)
@@ -55,7 +59,7 @@ def setup_dispatcher(prisma: Prisma) -> Dispatcher:
 
 
 async def on_startup(bot: Bot):
-    webhook_url = f"{WEBHOOK_URL}{WEBHOOK_PATH}"
+    webhook_url = f"https://{config.webhook_host}{WEBHOOK_PATH}"
     await bot.set_webhook(
         url=webhook_url,
         allowed_updates=["message", "callback_query"],
@@ -69,7 +73,28 @@ async def on_shutdown(bot: Bot):
     logger.info("Webhook deleted")
 
 
-async def run_webhook_mode(prisma: Prisma):
+async def main():
+    if not config.bot.token:
+        logger.error("TELEGRAM_BOT_TOKEN is not set!")
+        return
+    
+    if not config.database.url:
+        logger.error("BOT_DATABASE is not set!")
+        return
+    
+    if not config.webhook_host:
+        logger.error("WEBHOOK_HOST or REPLIT_DEV_DOMAIN is not set!")
+        return
+    
+    prisma = Prisma()
+    
+    try:
+        await prisma.connect()
+        logger.info("Connected to database")
+    except Exception as e:
+        logger.error(f"Failed to connect to database: {e}")
+        return
+    
     bot = Bot(
         token=config.bot.token,
         default=DefaultBotProperties(parse_mode=ParseMode.HTML),
@@ -92,9 +117,9 @@ async def run_webhook_mode(prisma: Prisma):
     
     setup_application(app, dp, bot=bot)
     
-    logger.info(f"Starting webhook server on port {WEBHOOK_PORT}")
+    logger.info(f"Starting Crypto Trading Bot in WEBHOOK mode...")
+    logger.info(f"Webhook host: {config.webhook_host}")
     logger.info(f"Telegram webhook path: {WEBHOOK_PATH}")
-    logger.info(f"OxaPay webhook path: /webhook/oxapay")
     logger.info(f"Admin IDs: {config.bot.admin_ids}")
     
     runner = web.AppRunner(app)
@@ -102,66 +127,14 @@ async def run_webhook_mode(prisma: Prisma):
     site = web.TCPSite(runner, "0.0.0.0", WEBHOOK_PORT)
     await site.start()
     
-    logger.info("Bot is running in WEBHOOK mode!")
+    logger.info(f"Bot webhook server running on 0.0.0.0:{WEBHOOK_PORT}")
     
     try:
         await asyncio.Event().wait()
     finally:
         await runner.cleanup()
-        await bot.session.close()
-
-
-async def run_polling_mode(prisma: Prisma):
-    from bot.webhook import run_webhook_server
-    
-    webhook_runner = await run_webhook_server(prisma, port=8080)
-    
-    bot = Bot(
-        token=config.bot.token,
-        default=DefaultBotProperties(parse_mode=ParseMode.HTML),
-    )
-    
-    dp = setup_dispatcher(prisma)
-    
-    logger.info("Starting Crypto Trading Bot in POLLING mode...")
-    logger.info(f"Admin IDs: {config.bot.admin_ids}")
-    
-    try:
-        await bot.delete_webhook(drop_pending_updates=True)
-        await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
-    finally:
-        await webhook_runner.cleanup()
-        await bot.session.close()
-
-
-async def main():
-    if not config.bot.token:
-        logger.error("TELEGRAM_BOT_TOKEN is not set!")
-        logger.info("Please set TELEGRAM_BOT_TOKEN environment variable")
-        return
-    
-    if not config.database.url:
-        logger.error("DATABASE_URL is not set!")
-        logger.info("Please set DATABASE_URL environment variable")
-        return
-    
-    prisma = Prisma()
-    
-    try:
-        await prisma.connect()
-        logger.info("Connected to database")
-    except Exception as e:
-        logger.error(f"Failed to connect to database: {e}")
-        logger.info("Please check DATABASE_URL and ensure database is accessible")
-        return
-    
-    try:
-        if WEBHOOK_URL:
-            await run_webhook_mode(prisma)
-        else:
-            await run_polling_mode(prisma)
-    finally:
         await prisma.disconnect()
+        await bot.session.close()
 
 
 if __name__ == "__main__":

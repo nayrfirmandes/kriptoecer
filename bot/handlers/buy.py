@@ -1,5 +1,6 @@
 from decimal import Decimal
 from datetime import datetime, timedelta
+from typing import Optional
 from aiogram import Router, F
 from aiogram.types import CallbackQuery, Message
 from aiogram.fsm.context import FSMContext
@@ -27,7 +28,6 @@ from bot.keyboards.inline import (
 from bot.utils.helpers import parse_amount, idr_to_crypto
 from bot.services.oxapay import OxaPayService
 from bot.db.queries import (
-    get_user_by_telegram_id,
     get_coin_settings,
     create_crypto_order,
     update_balance,
@@ -48,9 +48,7 @@ class BuyStates(StatesGroup):
 
 
 @router.callback_query(F.data == CallbackData.MENU_BUY)
-async def show_buy_menu(callback: CallbackQuery, state: FSMContext, db: Prisma, **kwargs):
-    user = await get_user_by_telegram_id(db, callback.from_user.id)
-    
+async def show_buy_menu(callback: CallbackQuery, state: FSMContext, db: Prisma, user: Optional[dict] = None, **kwargs):
     if not user or user.status != "ACTIVE":
         await callback.answer("Silakan daftar terlebih dahulu.", show_alert=True)
         return
@@ -161,7 +159,7 @@ async def select_buy_network(callback: CallbackQuery, state: FSMContext, db: Pri
 
 
 @router.message(BuyStates.entering_amount)
-async def process_buy_amount(message: Message, state: FSMContext, db: Prisma, **kwargs):
+async def process_buy_amount(message: Message, state: FSMContext, db: Prisma, user: Optional[dict] = None, **kwargs):
     amount_idr = parse_amount(message.text)
     
     if not amount_idr or amount_idr < Decimal("10000"):
@@ -172,7 +170,10 @@ async def process_buy_amount(message: Message, state: FSMContext, db: Prisma, **
         )
         return
     
-    user = await get_user_by_telegram_id(db, message.from_user.id)
+    if not user:
+        await message.answer(format_error("User tidak ditemukan."), parse_mode="HTML")
+        return
+    
     balance = user.balance.amount if user.balance else Decimal("0")
     
     data = await state.get_data()
@@ -248,10 +249,13 @@ async def process_wallet_address(message: Message, state: FSMContext, **kwargs):
 
 
 @router.callback_query(F.data == "buy:confirm:process")
-async def confirm_buy(callback: CallbackQuery, state: FSMContext, db: Prisma, **kwargs):
+async def confirm_buy(callback: CallbackQuery, state: FSMContext, db: Prisma, user: Optional[dict] = None, **kwargs):
     data = await state.get_data()
     
-    user = await get_user_by_telegram_id(db, callback.from_user.id)
+    if not user:
+        await callback.answer("User tidak ditemukan.", show_alert=True)
+        return
+    
     balance = user.balance.amount if user.balance else Decimal("0")
     total_idr = Decimal(str(data["total_idr"]))
     

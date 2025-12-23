@@ -1,4 +1,5 @@
 from decimal import Decimal
+from typing import Optional
 from aiogram import Router, F
 from aiogram.types import CallbackQuery, Message
 from aiogram.fsm.context import FSMContext
@@ -21,7 +22,7 @@ from bot.keyboards.inline import (
     get_cancel_keyboard,
 )
 from bot.utils.helpers import parse_amount
-from bot.db.queries import get_user_by_telegram_id, get_payment_methods, create_deposit
+from bot.db.queries import get_payment_methods, create_deposit
 from bot.config import config
 
 router = Router()
@@ -36,9 +37,7 @@ class TopupStates(StatesGroup):
 
 
 @router.callback_query(F.data == CallbackData.MENU_TOPUP)
-async def show_topup_menu(callback: CallbackQuery, state: FSMContext, db: Prisma, **kwargs):
-    user = await get_user_by_telegram_id(db, callback.from_user.id)
-    
+async def show_topup_menu(callback: CallbackQuery, state: FSMContext, db: Prisma, user: Optional[dict] = None, **kwargs):
     if not user or user.status != "ACTIVE":
         await callback.answer("Silakan daftar terlebih dahulu.", show_alert=True)
         return
@@ -94,7 +93,7 @@ async def select_topup_method(callback: CallbackQuery, state: FSMContext, db: Pr
 
 
 @router.message(TopupStates.entering_amount)
-async def process_topup_amount(message: Message, state: FSMContext, db: Prisma, **kwargs):
+async def process_topup_amount(message: Message, state: FSMContext, db: Prisma, user: Optional[dict] = None, **kwargs):
     amount = parse_amount(message.text)
     
     if not amount or amount < MIN_TOPUP:
@@ -105,9 +104,11 @@ async def process_topup_amount(message: Message, state: FSMContext, db: Prisma, 
         )
         return
     
-    data = await state.get_data()
+    if not user:
+        await message.answer(format_error("User tidak ditemukan."), parse_mode="HTML")
+        return
     
-    user = await get_user_by_telegram_id(db, message.from_user.id)
+    data = await state.get_data()
     
     deposit = await create_deposit(
         db=db,

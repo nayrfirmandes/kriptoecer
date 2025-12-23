@@ -3,6 +3,7 @@ from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command, CommandStart
 from aiogram.fsm.context import FSMContext
 from prisma import Prisma
+from typing import Optional
 
 from bot.formatters.messages import format_welcome, format_terms, format_main_menu
 from bot.keyboards.inline import get_terms_keyboard, get_main_menu_keyboard, CallbackData
@@ -12,10 +13,8 @@ router = Router()
 
 
 @router.message(CommandStart())
-async def cmd_start(message: Message, state: FSMContext, db: Prisma, **kwargs):
+async def cmd_start(message: Message, state: FSMContext, db: Prisma, user: Optional[dict] = None, **kwargs):
     await state.clear()
-    
-    user = await get_user_by_telegram_id(db, message.from_user.id)
     
     if user:
         if user.status == "INACTIVE":
@@ -65,10 +64,8 @@ async def cmd_start(message: Message, state: FSMContext, db: Prisma, **kwargs):
 
 
 @router.callback_query(F.data == CallbackData.BACK_MENU)
-async def back_to_menu(callback: CallbackQuery, state: FSMContext, db: Prisma, **kwargs):
+async def back_to_menu(callback: CallbackQuery, state: FSMContext, db: Prisma, user: Optional[dict] = None, **kwargs):
     await state.clear()
-    
-    user = await get_user_by_telegram_id(db, callback.from_user.id)
     
     if not user or user.status != "ACTIVE":
         await callback.message.edit_text(

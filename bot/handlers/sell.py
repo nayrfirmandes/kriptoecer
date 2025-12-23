@@ -1,5 +1,6 @@
 from decimal import Decimal
 from datetime import datetime, timedelta
+from typing import Optional
 from aiogram import Router, F
 from aiogram.types import CallbackQuery, Message
 from aiogram.fsm.context import FSMContext
@@ -23,7 +24,6 @@ from bot.keyboards.inline import (
 from bot.utils.helpers import parse_crypto_amount, calculate_sell_price
 from bot.services.oxapay import OxaPayService
 from bot.db.queries import (
-    get_user_by_telegram_id,
     get_coin_settings,
     create_crypto_order,
 )
@@ -42,9 +42,7 @@ class SellStates(StatesGroup):
 
 
 @router.callback_query(F.data == CallbackData.MENU_SELL)
-async def show_sell_menu(callback: CallbackQuery, state: FSMContext, db: Prisma, **kwargs):
-    user = await get_user_by_telegram_id(db, callback.from_user.id)
-    
+async def show_sell_menu(callback: CallbackQuery, state: FSMContext, db: Prisma, user: Optional[dict] = None, **kwargs):
     if not user or user.status != "ACTIVE":
         await callback.answer("Silakan daftar terlebih dahulu.", show_alert=True)
         return
@@ -155,7 +153,7 @@ async def select_sell_network(callback: CallbackQuery, state: FSMContext, db: Pr
 
 
 @router.message(SellStates.entering_amount)
-async def process_sell_amount(message: Message, state: FSMContext, db: Prisma, **kwargs):
+async def process_sell_amount(message: Message, state: FSMContext, db: Prisma, user: Optional[dict] = None, **kwargs):
     crypto_amount = parse_crypto_amount(message.text)
     
     if not crypto_amount or crypto_amount <= 0:
@@ -181,7 +179,9 @@ async def process_sell_amount(message: Message, state: FSMContext, db: Prisma, *
         )
         return
     
-    user = await get_user_by_telegram_id(db, message.from_user.id)
+    if not user:
+        await message.answer(format_error("User tidak ditemukan."), parse_mode="HTML")
+        return
     
     oxapay = OxaPayService(
         merchant_api_key=config.oxapay.merchant_api_key,
