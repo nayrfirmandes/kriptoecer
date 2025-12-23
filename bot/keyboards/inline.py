@@ -95,7 +95,7 @@ def get_main_menu_keyboard() -> InlineKeyboardMarkup:
         InlineKeyboardButton(text="⚙️  Setting", callback_data=CallbackData.MENU_SETTINGS),
     )
     builder.row(
-        InlineKeyboardButton(text="📦  Stock", callback_data=CallbackData.MENU_STOCK),
+        InlineKeyboardButton(text="📦  Stock Crypto", callback_data=CallbackData.MENU_STOCK),
         InlineKeyboardButton(text="❓  Bantuan", callback_data=CallbackData.MENU_HELP),
     )
     return builder.as_markup()
@@ -113,6 +113,18 @@ def get_balance_keyboard() -> InlineKeyboardMarkup:
     return builder.as_markup()
 
 
+def get_coin_emoji(coin: str) -> str:
+    emojis = {
+        "BTC": "₿",
+        "ETH": "Ξ",
+        "BNB": "◈",
+        "SOL": "◎",
+        "USDT": "₮",
+        "USDC": "◉",
+    }
+    return emojis.get(coin, "•")
+
+
 def get_coins_keyboard(coins: list[dict], action: str) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     
@@ -121,9 +133,10 @@ def get_coins_keyboard(coins: list[dict], action: str) -> InlineKeyboardMarkup:
         for j in range(2):
             if i + j < len(coins):
                 symbol = coins[i + j]["symbol"]
+                emoji = get_coin_emoji(symbol)
                 row.append(
                     InlineKeyboardButton(
-                        text=symbol,
+                        text=f"{emoji} {symbol}",
                         callback_data=f"{action}:coin:{symbol}"
                     )
                 )

@@ -41,7 +41,7 @@ def format_stock_message(balances: dict, prices: dict) -> str:
     lines.append("━━━━━━━━━━━━━━━━━━━━━━")
     lines.append(f"{Emoji.MONEY} <b>Total Value:</b> ${total_usd:,.2f}")
     lines.append("")
-    lines.append("<i>Data realtime dari OxaPay wallet</i>")
+    lines.append("<i>Data realtime dari custody wallet</i>")
     
     return "\n".join(lines)
 
