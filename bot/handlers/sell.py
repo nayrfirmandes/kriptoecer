@@ -50,8 +50,8 @@ async def show_sell_menu(callback: CallbackQuery, state: FSMContext, db: Prisma,
         return
     
     oxapay = OxaPayService(
-        api_key=config.oxapay.api_key,
-        merchant_id=config.oxapay.merchant_id,
+        merchant_api_key=config.oxapay.merchant_api_key,
+        payout_api_key=config.oxapay.payout_api_key,
         webhook_secret=config.oxapay.webhook_secret,
     )
     
@@ -75,8 +75,8 @@ async def select_sell_coin(callback: CallbackQuery, state: FSMContext, **kwargs)
     coin = callback.data.split(":")[-1]
     
     oxapay = OxaPayService(
-        api_key=config.oxapay.api_key,
-        merchant_id=config.oxapay.merchant_id,
+        merchant_api_key=config.oxapay.merchant_api_key,
+        payout_api_key=config.oxapay.payout_api_key,
         webhook_secret=config.oxapay.webhook_secret,
     )
     
@@ -114,8 +114,8 @@ async def select_sell_network(callback: CallbackQuery, state: FSMContext, db: Pr
         margin = coin_setting.sellMargin
     
     oxapay = OxaPayService(
-        api_key=config.oxapay.api_key,
-        merchant_id=config.oxapay.merchant_id,
+        merchant_api_key=config.oxapay.merchant_api_key,
+        payout_api_key=config.oxapay.payout_api_key,
         webhook_secret=config.oxapay.webhook_secret,
     )
     
@@ -181,8 +181,8 @@ async def process_sell_amount(message: Message, state: FSMContext, db: Prisma, *
     user = await get_user_by_telegram_id(db, message.from_user.id)
     
     oxapay = OxaPayService(
-        api_key=config.oxapay.api_key,
-        merchant_id=config.oxapay.merchant_id,
+        merchant_api_key=config.oxapay.merchant_api_key,
+        payout_api_key=config.oxapay.payout_api_key,
         webhook_secret=config.oxapay.webhook_secret,
     )
     
@@ -255,8 +255,8 @@ async def process_sell_amount(message: Message, state: FSMContext, db: Prisma, *
 @router.callback_query(F.data == "sell:back")
 async def back_to_sell_coins(callback: CallbackQuery, state: FSMContext, **kwargs):
     oxapay = OxaPayService(
-        api_key=config.oxapay.api_key,
-        merchant_id=config.oxapay.merchant_id,
+        merchant_api_key=config.oxapay.merchant_api_key,
+        payout_api_key=config.oxapay.payout_api_key,
         webhook_secret=config.oxapay.webhook_secret,
     )
     

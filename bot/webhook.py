@@ -19,8 +19,8 @@ async def handle_oxapay_webhook(request: web.Request) -> web.Response:
         logger.info(f"Received webhook: {json.dumps(body)}")
         
         oxapay = OxaPayService(
-            api_key=config.oxapay.api_key,
-            merchant_id=config.oxapay.merchant_id,
+            merchant_api_key=config.oxapay.merchant_api_key,
+            payout_api_key=config.oxapay.payout_api_key,
             webhook_secret=config.oxapay.webhook_secret,
         )
         

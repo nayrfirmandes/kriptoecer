@@ -16,8 +16,8 @@ class DatabaseConfig:
 
 @dataclass
 class OxaPayConfig:
-    api_key: str
-    merchant_id: str
+    merchant_api_key: str
+    payout_api_key: str
     webhook_secret: str
     base_url: str = "https://api.oxapay.com"
 
@@ -43,8 +43,8 @@ def load_config() -> AppConfig:
             url=os.getenv("DATABASE_URL", ""),
         ),
         oxapay=OxaPayConfig(
-            api_key=os.getenv("OXAPAY_API_KEY", ""),
-            merchant_id=os.getenv("OXAPAY_MERCHANT_ID", ""),
+            merchant_api_key=os.getenv("OXAPAY_MERCHANT_API_KEY", ""),
+            payout_api_key=os.getenv("OXAPAY_PAYOUT_API_KEY", ""),
             webhook_secret=os.getenv("OXAPAY_WEBHOOK_SECRET", ""),
         ),
         debug=os.getenv("DEBUG", "false").lower() == "true",

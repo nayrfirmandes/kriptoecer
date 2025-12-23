@@ -33,9 +33,9 @@ class PayoutResult:
 class OxaPayService:
     BASE_URL = "https://api.oxapay.com"
     
-    def __init__(self, api_key: str, merchant_id: str, webhook_secret: str):
-        self.api_key = api_key
-        self.merchant_id = merchant_id
+    def __init__(self, merchant_api_key: str, payout_api_key: str, webhook_secret: str = ""):
+        self.merchant_api_key = merchant_api_key
+        self.payout_api_key = payout_api_key
         self.webhook_secret = webhook_secret
         self._session: Optional[aiohttp.ClientSession] = None
         self._currencies_cache: Optional[dict] = None
@@ -56,22 +56,20 @@ class OxaPayService:
         method: str,
         endpoint: str,
         data: Optional[dict] = None,
-        use_auth: bool = True
+        use_payout_key: bool = False
     ) -> dict:
         session = await self._get_session()
         url = f"{self.BASE_URL}{endpoint}"
         
         headers = {"Content-Type": "application/json"}
         
-        if use_auth and data:
-            data["merchant"] = self.merchant_id
-        
         try:
             if method == "GET":
                 async with session.get(url, headers=headers) as resp:
                     return await resp.json()
             else:
-                payload = {"merchant": self.api_key}
+                api_key = self.payout_api_key if use_payout_key else self.merchant_api_key
+                payload = {"merchant": api_key}
                 if data:
                     payload.update(data)
                 async with session.post(url, json=payload, headers=headers) as resp:
@@ -225,7 +223,7 @@ class OxaPayService:
         if description:
             data["description"] = description
         
-        result = await self._request("POST", "/v1/payout/create", data)
+        result = await self._request("POST", "/v1/payout/create", data, use_payout_key=True)
         
         if result.get("status") == 200:
             payout_data = result.get("data", {})
@@ -256,7 +254,8 @@ class OxaPayService:
         result = await self._request(
             "POST",
             "/v1/payout/info",
-            {"trackId": track_id}
+            {"trackId": track_id},
+            use_payout_key=True
         )
         
         if result.get("status") == 200:
@@ -277,12 +276,12 @@ class OxaPayService:
         
         return hmac.compare_digest(expected_sig, signature)
     
-    async def get_balance(self, currency: Optional[str] = None) -> dict:
+    async def get_balance(self, currency: Optional[str] = None, use_payout: bool = True) -> dict:
         data = {}
         if currency:
             data["currency"] = currency
         
-        result = await self._request("POST", "/v1/general/balance", data)
+        result = await self._request("POST", "/v1/general/balance", data, use_payout_key=use_payout)
         
         if result.get("status") == 200:
             return result.get("data", {})
