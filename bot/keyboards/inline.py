@@ -19,6 +19,7 @@ class CallbackData:
     MENU_HELP = "menu:help"
     MENU_PROFILE = "menu:profile"
     MENU_SETTINGS = "menu:settings"
+    MENU_STOCK = "menu:stock"
     
     SETTINGS_SET_PIN = "settings:set_pin"
     SETTINGS_CHANGE_PIN = "settings:change_pin"
@@ -94,6 +95,7 @@ def get_main_menu_keyboard() -> InlineKeyboardMarkup:
         InlineKeyboardButton(text="⚙️  Setting", callback_data=CallbackData.MENU_SETTINGS),
     )
     builder.row(
+        InlineKeyboardButton(text="📦  Stock", callback_data=CallbackData.MENU_STOCK),
         InlineKeyboardButton(text="❓  Bantuan", callback_data=CallbackData.MENU_HELP),
     )
     return builder.as_markup()
