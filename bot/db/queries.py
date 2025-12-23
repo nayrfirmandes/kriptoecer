@@ -1,7 +1,7 @@
 from decimal import Decimal
 from typing import Optional
 from datetime import datetime
-from prisma import Prisma
+from prisma import Prisma, Json
 from prisma.models import User, Balance, Transaction, Deposit, Withdrawal, CryptoOrder, CoinSetting, PaymentMethod, ReferralSetting
 
 
@@ -87,12 +87,12 @@ async def create_deposit(
     
     await db.transaction.create(
         data={
-            "userId": user_id,
+            "user": {"connect": {"id": user_id}},
             "type": "TOPUP",
             "amount": amount,
             "status": "PENDING",
-            "description": f"Top up via {payment_method}",
-            "metadata": {"depositId": deposit.id},
+            "description": f"Deposit via {payment_method}",
+            "metadata": Json({"depositId": deposit.id}),
         }
     )
     
@@ -124,12 +124,12 @@ async def create_withdrawal(
     
     await db.transaction.create(
         data={
-            "userId": user_id,
+            "user": {"connect": {"id": user_id}},
             "type": "WITHDRAW",
             "amount": amount,
             "status": "PENDING",
             "description": f"Withdraw to {bank_name or ewallet_type}",
-            "metadata": {"withdrawalId": withdrawal.id},
+            "metadata": Json({"withdrawalId": withdrawal.id}),
         }
     )
     
