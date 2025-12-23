@@ -81,7 +81,7 @@ class OxaPayService:
         if self._currencies_cache and not force_refresh:
             return self._currencies_cache
         
-        result = await self._request("GET", "/v1/common/currencies", use_auth=False)
+        result = await self._request("GET", "/v1/common/currencies")
         
         if result.get("status") == 200:
             self._currencies_cache = result.get("data", {})
