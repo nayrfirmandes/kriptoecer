@@ -8,31 +8,66 @@ from http.server import BaseHTTPRequestHandler
 
 from aiogram import Bot, Dispatcher
 from aiogram.types import Update
+from aiogram.client.default import DefaultBotProperties
+from aiogram.enums import ParseMode
+from aiogram.fsm.storage.memory import MemoryStorage
 from dotenv import load_dotenv
+from prisma import Prisma
 
 load_dotenv()
 
 from bot.config import config
 from bot.handlers import setup_routers
-from bot.middlewares import setup_middlewares
+from bot.middlewares.throttling import ThrottlingMiddleware
+from bot.middlewares.database import DatabaseMiddleware
+from bot.middlewares.user_status import UserStatusMiddleware
+from bot.middlewares.logging import LoggingMiddleware
 
-bot = Bot(token=config.bot.token)
-dp = Dispatcher()
+bot = None
+dp = None
+prisma = None
+initialized = False
 
-setup_routers_done = False
 
-
-async def init_dispatcher():
-    global setup_routers_done
-    if not setup_routers_done:
-        router = setup_routers()
-        dp.include_router(router)
-        await setup_middlewares(dp)
-        setup_routers_done = True
+async def init():
+    global bot, dp, prisma, initialized
+    
+    if initialized:
+        return
+    
+    prisma = Prisma()
+    await prisma.connect()
+    
+    bot = Bot(
+        token=config.bot.token,
+        default=DefaultBotProperties(parse_mode=ParseMode.HTML),
+    )
+    
+    storage = MemoryStorage()
+    dp = Dispatcher(storage=storage)
+    
+    logging_mw = LoggingMiddleware()
+    throttling_mw = ThrottlingMiddleware(rate_limit=0.1)
+    database_mw = DatabaseMiddleware(prisma)
+    user_status_mw = UserStatusMiddleware()
+    
+    dp.message.middleware(logging_mw)
+    dp.callback_query.middleware(logging_mw)
+    dp.message.middleware(throttling_mw)
+    dp.callback_query.middleware(throttling_mw)
+    dp.message.middleware(database_mw)
+    dp.callback_query.middleware(database_mw)
+    dp.message.middleware(user_status_mw)
+    dp.callback_query.middleware(user_status_mw)
+    
+    router = setup_routers()
+    dp.include_router(router)
+    
+    initialized = True
 
 
 async def process_update(update_data: dict):
-    await init_dispatcher()
+    await init()
     update = Update(**update_data)
     await dp.feed_update(bot, update)
 

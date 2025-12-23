@@ -29,26 +29,27 @@ async def process_oxapay_webhook(data: dict):
         if not track_id:
             return {"ok": False, "error": "No trackId"}
         
-        order = await db.cryptoorder.find_unique(where={"oxapayTrackId": track_id})
+        order = await db.cryptoorder.find_first(where={"oxapayTrackId": track_id})
         
         if not order:
             return {"ok": False, "error": "Order not found"}
         
-        if status == "Paid" and order.status == "PENDING":
+        if status == "Paid" and str(order.status) == "PENDING":
             await db.cryptoorder.update(
                 where={"id": order.id},
                 data={"status": "COMPLETED"}
             )
-        elif status == "Expired" and order.status == "PENDING":
+        elif status == "Expired" and str(order.status) == "PENDING":
             await db.cryptoorder.update(
                 where={"id": order.id},
                 data={"status": "FAILED"}
             )
             
-            await db.balance.update(
-                where={"userId": order.userId},
-                data={"amount": {"increment": order.totalIdr}}
-            )
+            if order.fiatAmount:
+                await db.balance.update(
+                    where={"userId": order.userId},
+                    data={"amount": {"increment": order.fiatAmount}}
+                )
         
         return {"ok": True}
     finally:
