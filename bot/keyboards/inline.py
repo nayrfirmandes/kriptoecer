@@ -117,7 +117,7 @@ def get_networks_keyboard(networks: list[dict], coin: str, action: str) -> Inlin
         fee = net.get("withdraw_fee", 0)
         builder.row(
             InlineKeyboardButton(
-                text=f"🔗 {network} (Fee: {fee})",
+                text=f"🔗 {network} (Fee: {fee} {coin})",
                 callback_data=f"{action}:network:{coin}:{network}"
             )
         )
