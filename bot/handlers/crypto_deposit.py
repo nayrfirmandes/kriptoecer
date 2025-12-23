@@ -87,7 +87,7 @@ async def show_crypto_deposit(callback: CallbackQuery, state: FSMContext, **kwar
 async def select_crypto_coin(callback: CallbackQuery, state: FSMContext, **kwargs):
     coin = callback.data.split(":")[-1]
     
-    await state.update_data(coin=coin)
+    await state.update_data(coin=coin, prompt_msg_id=callback.message.message_id)
     await state.set_state(CryptoDepositStates.entering_amount)
     
     await callback.message.edit_text(
@@ -103,9 +103,14 @@ async def select_crypto_coin(callback: CallbackQuery, state: FSMContext, **kwarg
 @router.message(CryptoDepositStates.entering_amount)
 async def process_crypto_amount(message: Message, state: FSMContext, db: Prisma, user: Optional[dict] = None, **kwargs):
     try:
+        await message.delete()
+    except:
+        pass
+    
+    try:
         amount = Decimal(message.text.strip().replace(",", "."))
     except:
-        await message.answer(
+        sent = await message.answer(
             f"{Emoji.CROSS} Format jumlah tidak valid. Gunakan angka.",
             reply_markup=get_cancel_keyboard("topup:method:crypto"),
             parse_mode="HTML"
@@ -113,7 +118,7 @@ async def process_crypto_amount(message: Message, state: FSMContext, db: Prisma,
         return
     
     if amount < MIN_DEPOSIT:
-        await message.answer(
+        sent = await message.answer(
             f"{Emoji.CROSS} Jumlah minimal adalah {MIN_DEPOSIT}",
             reply_markup=get_cancel_keyboard("topup:method:crypto"),
             parse_mode="HTML"
@@ -126,6 +131,13 @@ async def process_crypto_amount(message: Message, state: FSMContext, db: Prisma,
     
     data = await state.get_data()
     coin = data.get("coin", "USDT")
+    prompt_msg_id = data.get("prompt_msg_id")
+    
+    if prompt_msg_id:
+        try:
+            await message.bot.delete_message(message.chat.id, prompt_msg_id)
+        except:
+            pass
     
     cryptobot = get_cryptobot()
     
