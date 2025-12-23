@@ -32,7 +32,11 @@ async def show_settings(callback: CallbackQuery, db: Prisma, user: Optional[dict
         await callback.answer("Silakan daftar terlebih dahulu.", show_alert=True)
         return
     
-    has_pin = bool(user.pinHash)
+    fresh_user = await db.user.find_unique(
+        where={"id": user.id}
+    )
+    
+    has_pin = bool(fresh_user.pinHash) if fresh_user else False
     pin_status = f"{Emoji.CHECK} PIN sudah diatur" if has_pin else f"{Emoji.WARNING} PIN belum diatur"
     
     settings_text = f"""{Emoji.GEAR} <b>Pengaturan Akun</b>
@@ -172,6 +176,20 @@ async def process_confirm_pin(message: Message, state: FSMContext, db: Prisma, u
 
 PIN transaksi Anda sudah aktif dan siap digunakan.
 Jangan bagikan PIN kepada siapapun.""",
-        reply_markup=get_back_keyboard(),
+        reply_markup=get_settings_back_keyboard(),
         parse_mode="HTML"
     )
+
+
+def get_settings_back_keyboard() -> InlineKeyboardMarkup:
+    from aiogram.types import InlineKeyboardButton
+    from aiogram.utils.keyboard import InlineKeyboardBuilder
+    
+    builder = InlineKeyboardBuilder()
+    builder.row(
+        InlineKeyboardButton(text="⚙️ Kembali ke Pengaturan", callback_data=CallbackData.MENU_SETTINGS),
+    )
+    builder.row(
+        InlineKeyboardButton(text="◀️ Menu Utama", callback_data=CallbackData.BACK_MENU),
+    )
+    return builder.as_markup()
