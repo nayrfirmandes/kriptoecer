@@ -5,9 +5,9 @@ from aiogram.types import CallbackQuery
 from aiogram.fsm.context import FSMContext
 from prisma import Prisma
 
-from bot.formatters.messages import format_referral_info, format_rates, Emoji
+from bot.formatters.messages import format_referral_info, format_rates, format_profile, Emoji
 from bot.keyboards.inline import CallbackData, get_back_keyboard
-from bot.db.queries import get_referral_count, get_referral_bonus_earned
+from bot.db.queries import get_referral_count, get_referral_bonus_earned, get_user_by_telegram_id
 from bot.services.oxapay import OxaPayService
 from bot.config import config
 
@@ -88,6 +88,32 @@ async def show_help(callback: CallbackQuery, **kwargs):
     
     await callback.message.edit_text(
         help_text,
+        reply_markup=get_back_keyboard(),
+        parse_mode="HTML"
+    )
+    await callback.answer()
+
+
+@router.callback_query(F.data == CallbackData.MENU_PROFILE)
+async def show_profile(callback: CallbackQuery, db: Prisma, user: Optional[dict] = None, **kwargs):
+    if not user:
+        await callback.answer("Silakan daftar terlebih dahulu.", show_alert=True)
+        return
+    
+    balance = user.balance.amount if user.balance else 0
+    
+    await callback.message.edit_text(
+        format_profile(
+            telegram_id=user.telegramId,
+            username=user.username,
+            first_name=user.firstName,
+            email=user.email,
+            whatsapp=user.whatsapp,
+            status=user.status,
+            referral_code=user.referralCode,
+            created_at=user.createdAt,
+            balance=balance
+        ),
         reply_markup=get_back_keyboard(),
         parse_mode="HTML"
     )

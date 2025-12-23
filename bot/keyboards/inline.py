@@ -17,6 +17,7 @@ class CallbackData:
     MENU_REFERRAL = "menu:referral"
     MENU_RATES = "menu:rates"
     MENU_HELP = "menu:help"
+    MENU_PROFILE = "menu:profile"
     
     BACK_MENU = "back:menu"
     BACK = "back"
@@ -84,6 +85,7 @@ def get_main_menu_keyboard() -> InlineKeyboardMarkup:
         InlineKeyboardButton(text="Referral", callback_data=CallbackData.MENU_REFERRAL),
     )
     builder.row(
+        InlineKeyboardButton(text="Profil", callback_data=CallbackData.MENU_PROFILE),
         InlineKeyboardButton(text="Bantuan", callback_data=CallbackData.MENU_HELP),
     )
     return builder.as_markup()

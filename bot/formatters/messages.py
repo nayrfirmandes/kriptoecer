@@ -402,3 +402,51 @@ Bagikan kode Anda dan dapatkan bonus!""".format(
         count=count,
         bonus=format_currency(bonus_earned)
     )
+
+
+def format_profile(
+    telegram_id: int,
+    username: str,
+    first_name: str,
+    email: str,
+    whatsapp: str,
+    status: str,
+    referral_code: str,
+    created_at,
+    balance: Decimal
+) -> str:
+    status_text = {
+        "ACTIVE": f"{Emoji.CHECK} Aktif",
+        "PENDING": "○ Pending",
+        "INACTIVE": f"{Emoji.WARNING} Tidak Aktif",
+        "BANNED": f"{Emoji.CROSS} Diblokir",
+    }.get(status, status)
+    
+    created_wib = format_wib_datetime(created_at) if created_at else "-"
+    
+    return """<b>Profil Saya</b>
+
+{dot} <b>Nama:</b> {name}
+{dot} <b>Username:</b> @{username}
+{dot} <b>ID:</b> <code>{telegram_id}</code>
+{dot} <b>Email:</b> {email}
+{dot} <b>WhatsApp:</b> {whatsapp}
+
+{money} <b>Saldo:</b> {balance}
+{gift} <b>Kode Referral:</b> <code>{referral_code}</code>
+
+<b>Status Akun:</b> {status}
+<b>Terdaftar:</b> {created_at}""".format(
+        dot=Emoji.DOT,
+        money=Emoji.MONEY,
+        gift=Emoji.GIFT,
+        name=first_name or "-",
+        username=username or "-",
+        telegram_id=telegram_id,
+        email=email or "-",
+        whatsapp=whatsapp or "-",
+        balance=format_currency(balance),
+        referral_code=referral_code,
+        status=status_text,
+        created_at=created_wib
+    )
