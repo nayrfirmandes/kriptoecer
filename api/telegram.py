@@ -1,5 +1,6 @@
 import os
 import sys
+import subprocess
 
 root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if root_path not in sys.path:
@@ -7,21 +8,27 @@ if root_path not in sys.path:
 
 import asyncio
 import json
+from http.server import BaseHTTPRequestHandler
 from dotenv import load_dotenv
 
 load_dotenv()
-
-from aiogram import Bot, Dispatcher
-from aiogram.types import Update
-from aiogram.client.default import DefaultBotProperties
-from aiogram.enums import ParseMode
-from aiogram.fsm.storage.memory import MemoryStorage
-from prisma import Prisma
 
 _bot = None
 _dp = None
 _prisma = None
 _initialized = False
+
+
+def ensure_prisma_generated():
+    try:
+        subprocess.run(
+            ["python", "-m", "prisma", "generate"],
+            check=True,
+            capture_output=True,
+            cwd=root_path
+        )
+    except Exception as e:
+        print(f"Prisma generate error: {e}")
 
 
 def get_config():
@@ -46,6 +53,14 @@ async def init():
     
     if _initialized:
         return _bot, _dp
+    
+    ensure_prisma_generated()
+    
+    from prisma import Prisma
+    from aiogram import Bot, Dispatcher
+    from aiogram.client.default import DefaultBotProperties
+    from aiogram.enums import ParseMode
+    from aiogram.fsm.storage.memory import MemoryStorage
     
     config = get_config()
     
@@ -88,28 +103,11 @@ async def init():
 
 
 async def process_update(update_data: dict):
+    from aiogram.types import Update
     bot, dp = await init()
     update = Update(**update_data)
     await dp.feed_update(bot, update)
 
-
-async def handler(request):
-    from http.server import BaseHTTPRequestHandler
-    
-    if request.method == "POST":
-        try:
-            body = await request.body()
-            update_data = json.loads(body.decode("utf-8"))
-            await process_update(update_data)
-            return {"statusCode": 200, "body": '{"ok": true}'}
-        except Exception as e:
-            print(f"Error: {e}")
-            return {"statusCode": 500, "body": json.dumps({"ok": False, "error": str(e)})}
-    
-    return {"statusCode": 200, "body": '{"status": "ok"}'}
-
-
-from http.server import BaseHTTPRequestHandler
 
 class handler(BaseHTTPRequestHandler):
     def do_POST(self):

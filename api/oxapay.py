@@ -1,22 +1,37 @@
-import sys
 import os
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import sys
+import subprocess
+
+root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if root_path not in sys.path:
+    sys.path.insert(0, root_path)
 
 import asyncio
 import json
 import hmac
 import hashlib
 from http.server import BaseHTTPRequestHandler
-from decimal import Decimal
 
 from dotenv import load_dotenv
 
 load_dotenv()
 
-from bot.config import config
+
+def ensure_prisma_generated():
+    try:
+        subprocess.run(
+            ["python", "-m", "prisma", "generate"],
+            check=True,
+            capture_output=True,
+            cwd=root_path
+        )
+    except Exception as e:
+        print(f"Prisma generate error: {e}")
 
 
 async def process_oxapay_webhook(data: dict):
+    ensure_prisma_generated()
+    
     from prisma import Prisma
     
     db = Prisma()
@@ -74,9 +89,10 @@ class handler(BaseHTTPRequestHandler):
         content_length = int(self.headers.get('Content-Length', 0))
         body = self.rfile.read(content_length)
         
+        webhook_secret = os.getenv("OXAPAY_WEBHOOK_SECRET", "")
         signature = self.headers.get('HMAC', '')
         
-        if not verify_signature(body, signature, config.oxapay.webhook_secret):
+        if not verify_signature(body, signature, webhook_secret):
             self.send_response(401)
             self.send_header('Content-Type', 'application/json')
             self.end_headers()

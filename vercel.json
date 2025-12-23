@@ -1,32 +1,23 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "api/*.py",
-      "use": "@vercel/python",
-      "config": {
-        "maxLambdaSize": "50mb"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/telegram/webhook",
-      "dest": "/api/telegram.py"
-    },
-    {
-      "src": "/webhook/oxapay",
-      "dest": "/api/oxapay.py"
-    },
-    {
-      "src": "/api/set-webhook",
-      "dest": "/api/set_webhook.py"
-    }
-  ],
-  "build": {
-    "env": {
-      "PRISMA_GENERATE_SKIP_AUTOINSTALL": "true"
+  "functions": {
+    "api/*.py": {
+      "maxDuration": 30
     }
   },
-  "installCommand": "pip install -r requirements.txt && prisma generate"
+  "rewrites": [
+    {
+      "source": "/telegram/webhook",
+      "destination": "/api/telegram"
+    },
+    {
+      "source": "/webhook/oxapay",
+      "destination": "/api/oxapay"
+    },
+    {
+      "source": "/api/set-webhook",
+      "destination": "/api/set_webhook"
+    }
+  ],
+  "installCommand": "pip install -r requirements.txt && python -m prisma generate"
 }

@@ -1,21 +1,24 @@
-import sys
 import os
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import sys
+
+root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if root_path not in sys.path:
+    sys.path.insert(0, root_path)
 
 import asyncio
 import json
 from http.server import BaseHTTPRequestHandler
 
-from aiogram import Bot
 from dotenv import load_dotenv
 
 load_dotenv()
 
-from bot.config import config
-
 
 async def set_telegram_webhook(host: str):
-    bot = Bot(token=config.bot.token)
+    from aiogram import Bot
+    
+    token = os.getenv("TELEGRAM_BOT_TOKEN", "")
+    bot = Bot(token=token)
     webhook_url = f"https://{host}/telegram/webhook"
     
     await bot.set_webhook(webhook_url)
