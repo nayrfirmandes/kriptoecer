@@ -125,15 +125,26 @@ class OxaPayService:
         
         return result
     
-    async def get_exchange_rate(self, from_currency: str, to_currency: str = "USD") -> Optional[Decimal]:
-        result = await self._request(
-            "POST",
-            "/v1/general/exchange-rate",
-            {"fromCurrency": from_currency, "toCurrency": to_currency}
-        )
+    async def get_prices(self) -> dict:
+        """Get all crypto prices in USD"""
+        session = await self._get_session()
+        url = f"{self.BASE_URL}/v1/common/prices"
         
-        if result.get("status") == 200:
-            rate = result.get("data", {}).get("rate")
+        try:
+            async with session.get(url) as resp:
+                result = await resp.json()
+                if result.get("status") == 200:
+                    return result.get("data", {})
+        except Exception:
+            pass
+        return {}
+    
+    async def get_exchange_rate(self, from_currency: str, to_currency: str = "USD") -> Optional[Decimal]:
+        """Get exchange rate for a specific currency to USD"""
+        prices = await self.get_prices()
+        
+        if from_currency in prices:
+            rate = prices[from_currency]
             if rate:
                 return Decimal(str(rate))
         
