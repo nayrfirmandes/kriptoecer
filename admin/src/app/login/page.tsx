@@ -1,51 +1,6 @@
-'use client'
-
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { loginAction } from './actions'
 
 export default function LoginPage() {
-  const router = useRouter()
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
-
-    const formData = new FormData(e.currentTarget)
-    const username = formData.get('username') as string
-    const password = formData.get('password') as string
-
-    console.log('Attempting login...', { username })
-
-    try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-        credentials: 'include',
-      })
-
-      console.log('Response status:', res.status)
-
-      const data = await res.json()
-      console.log('Response data:', data)
-
-      if (!res.ok) {
-        setError(data.error || 'Login gagal')
-        return
-      }
-
-      router.push('/dashboard')
-    } catch (err) {
-      console.error('Login error:', err)
-      setError('Terjadi kesalahan. Coba lagi.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
   return (
     <div style={{ 
       minHeight: '100vh', 
@@ -69,20 +24,7 @@ export default function LoginPage() {
           CryptoBot Management System
         </p>
         
-        <form onSubmit={handleSubmit}>
-          {error && (
-            <div style={{ 
-              padding: '0.75rem', 
-              backgroundColor: '#fef2f2', 
-              color: '#dc2626',
-              borderRadius: '4px',
-              marginBottom: '1rem',
-              fontSize: '0.875rem'
-            }}>
-              {error}
-            </div>
-          )}
-          
+        <form action={loginAction}>
           <div style={{ marginBottom: '1rem' }}>
             <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>
               Username
@@ -97,7 +39,8 @@ export default function LoginPage() {
                 padding: '0.5rem 0.75rem',
                 border: '1px solid #d1d5db',
                 borderRadius: '4px',
-                fontSize: '1rem'
+                fontSize: '1rem',
+                boxSizing: 'border-box'
               }}
             />
           </div>
@@ -115,26 +58,26 @@ export default function LoginPage() {
                 padding: '0.5rem 0.75rem',
                 border: '1px solid #d1d5db',
                 borderRadius: '4px',
-                fontSize: '1rem'
+                fontSize: '1rem',
+                boxSizing: 'border-box'
               }}
             />
           </div>
           
           <button
             type="submit"
-            disabled={loading}
             style={{
               width: '100%',
               padding: '0.75rem',
-              backgroundColor: loading ? '#9ca3af' : '#000',
+              backgroundColor: '#000',
               color: 'white',
               border: 'none',
               borderRadius: '4px',
               fontSize: '1rem',
-              cursor: loading ? 'not-allowed' : 'pointer'
+              cursor: 'pointer'
             }}
           >
-            {loading ? 'Loading...' : 'Login'}
+            Login
           </button>
         </form>
       </div>
