@@ -94,7 +94,34 @@ prisma studio
 - `/approve_withdraw [id]` - Approve withdrawal
 - `/reject_withdraw [id]` - Reject withdrawal
 
+## Deployment
+
+### Vercel
+Lihat `DEPLOY_VERCEL.md` untuk panduan lengkap.
+
+Files deployment:
+```
+api/
+├── telegram.py      # Telegram webhook handler
+├── oxapay.py        # OxaPay webhook handler
+└── set_webhook.py   # Set Telegram webhook
+vercel.json          # Vercel config
+```
+
+### Environment Variables
+Semua config menggunakan `.env` file:
+- `TELEGRAM_BOT_TOKEN`
+- `BOT_DATABASE`
+- `OXAPAY_MERCHANT_API_KEY`
+- `OXAPAY_PAYOUT_API_KEY`
+- `OXAPAY_WEBHOOK_SECRET`
+- `CRYPTOBOT_API_TOKEN`
+- `ADMIN_TELEGRAM_IDS`
+
 ## Recent Changes
+- CryptoBot integration untuk deposit crypto (USDT/USDC) dengan margin 5%
+- Real-time rate dari CryptoBot API
+- Vercel deployment setup
 - Initial setup with all handlers
 - Prisma schema with all models
 - OxaPay integration for payments
