@@ -92,11 +92,11 @@ def get_main_menu_keyboard() -> InlineKeyboardMarkup:
 def get_balance_keyboard() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
-        InlineKeyboardButton(text="➕ Deposit", callback_data=CallbackData.MENU_TOPUP),
-        InlineKeyboardButton(text="➖ Withdraw", callback_data=CallbackData.MENU_WITHDRAW),
+        InlineKeyboardButton(text="Deposit", callback_data=CallbackData.MENU_TOPUP),
+        InlineKeyboardButton(text="Withdraw", callback_data=CallbackData.MENU_WITHDRAW),
     )
     builder.row(
-        InlineKeyboardButton(text="◀️ Kembali", callback_data=CallbackData.BACK_MENU),
+        InlineKeyboardButton(text="Kembali", callback_data=CallbackData.BACK_MENU),
     )
     return builder.as_markup()
 
@@ -104,27 +104,21 @@ def get_balance_keyboard() -> InlineKeyboardMarkup:
 def get_coins_keyboard(coins: list[dict], action: str) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     
-    coin_emojis = {
-        "BTC": "🟠",
-        "ETH": "🔷",
-        "BNB": "🟡",
-        "SOL": "🟣",
-        "USDT": "🟢",
-        "USDC": "🔵",
-    }
-    
-    for coin in coins:
-        symbol = coin["symbol"]
-        emoji = coin_emojis.get(symbol, "🪙")
-        builder.row(
-            InlineKeyboardButton(
-                text=f"{emoji} {symbol}",
-                callback_data=f"{action}:coin:{symbol}"
-            )
-        )
+    for i in range(0, len(coins), 2):
+        row = []
+        for j in range(2):
+            if i + j < len(coins):
+                symbol = coins[i + j]["symbol"]
+                row.append(
+                    InlineKeyboardButton(
+                        text=symbol,
+                        callback_data=f"{action}:coin:{symbol}"
+                    )
+                )
+        builder.row(*row)
     
     builder.row(
-        InlineKeyboardButton(text="◀️ Kembali", callback_data=CallbackData.BACK_MENU),
+        InlineKeyboardButton(text="Kembali", callback_data=CallbackData.BACK_MENU),
     )
     return builder.as_markup()
 
@@ -144,13 +138,13 @@ def get_networks_keyboard(networks: list[dict], coin: str, action: str, rate_idr
         
         builder.row(
             InlineKeyboardButton(
-                text=f"🔗 {network} ({fee_text})",
+                text=f"{network} ({fee_text})",
                 callback_data=f"{action}:network:{coin}:{network}"
             )
         )
     
     builder.row(
-        InlineKeyboardButton(text="◀️ Kembali", callback_data=f"{action}:back"),
+        InlineKeyboardButton(text="Kembali", callback_data=f"{action}:back"),
     )
     return builder.as_markup()
 
@@ -173,22 +167,16 @@ def get_confirm_keyboard(action: str, order_id: str) -> InlineKeyboardMarkup:
 def get_topup_methods_keyboard(methods: list[dict]) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     
-    method_emojis = {
-        "bank": "🏦",
-        "ewallet": "📱",
-    }
-    
     for method in methods:
-        emoji = method_emojis.get(method["type"], "💳")
         builder.row(
             InlineKeyboardButton(
-                text=f"{emoji} {method['name']}",
+                text=method['name'],
                 callback_data=f"topup:method:{method['id']}"
             )
         )
     
     builder.row(
-        InlineKeyboardButton(text="◀️ Kembali", callback_data=CallbackData.BACK_MENU),
+        InlineKeyboardButton(text="Kembali", callback_data=CallbackData.BACK_MENU),
     )
     return builder.as_markup()
 
@@ -213,11 +201,11 @@ def get_topup_confirm_keyboard(deposit_id: str) -> InlineKeyboardMarkup:
 def get_withdraw_methods_keyboard() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
-        InlineKeyboardButton(text="🏦 Bank Transfer", callback_data="withdraw:method:bank"),
-        InlineKeyboardButton(text="📱 E-Wallet", callback_data="withdraw:method:ewallet"),
+        InlineKeyboardButton(text="Bank Transfer", callback_data="withdraw:method:bank"),
+        InlineKeyboardButton(text="E-Wallet", callback_data="withdraw:method:ewallet"),
     )
     builder.row(
-        InlineKeyboardButton(text="◀️ Kembali", callback_data=CallbackData.BACK_MENU),
+        InlineKeyboardButton(text="Kembali", callback_data=CallbackData.BACK_MENU),
     )
     return builder.as_markup()
 
@@ -233,14 +221,14 @@ def get_ewallet_options_keyboard() -> InlineKeyboardMarkup:
                 ew = ewallets[i + j]
                 row.append(
                     InlineKeyboardButton(
-                        text=f"📱 {ew}",
+                        text=ew,
                         callback_data=f"withdraw:ewallet:{ew}"
                     )
                 )
         builder.row(*row)
     
     builder.row(
-        InlineKeyboardButton(text="◀️ Kembali", callback_data="withdraw:back"),
+        InlineKeyboardButton(text="Kembali", callback_data="withdraw:back"),
     )
     return builder.as_markup()
 
@@ -248,15 +236,15 @@ def get_ewallet_options_keyboard() -> InlineKeyboardMarkup:
 def get_back_keyboard(callback_data: str = CallbackData.BACK_MENU) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
-        InlineKeyboardButton(text="◀️ Kembali", callback_data=callback_data),
+        InlineKeyboardButton(text="Kembali", callback_data=callback_data),
     )
     return builder.as_markup()
 
 
-def get_cancel_keyboard() -> InlineKeyboardMarkup:
+def get_cancel_keyboard(back_callback: str = CallbackData.BACK_MENU) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
-        InlineKeyboardButton(text="❌ Batal", callback_data=CallbackData.CANCEL),
+        InlineKeyboardButton(text="Batal", callback_data=back_callback),
     )
     return builder.as_markup()
 
@@ -274,7 +262,7 @@ def get_history_pagination_keyboard(
     if page > 1:
         nav_buttons.append(
             InlineKeyboardButton(
-                text="◀️ Prev",
+                text="Prev",
                 callback_data=f"history:page{filter_prefix}:{page - 1}"
             )
         )
@@ -289,7 +277,7 @@ def get_history_pagination_keyboard(
     if page < total_pages:
         nav_buttons.append(
             InlineKeyboardButton(
-                text="Next ▶️",
+                text="Next",
                 callback_data=f"history:page{filter_prefix}:{page + 1}"
             )
         )
@@ -298,6 +286,6 @@ def get_history_pagination_keyboard(
         builder.row(*nav_buttons)
     
     builder.row(
-        InlineKeyboardButton(text="◀️ Kembali", callback_data=CallbackData.BACK_MENU),
+        InlineKeyboardButton(text="Kembali", callback_data=CallbackData.BACK_MENU),
     )
     return builder.as_markup()

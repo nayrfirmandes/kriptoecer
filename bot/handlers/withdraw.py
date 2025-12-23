@@ -74,7 +74,7 @@ async def select_bank(callback: CallbackQuery, state: FSMContext, **kwargs):
     
     await callback.message.edit_text(
         f"{Emoji.BANK} <b>Nama Bank</b>\n\nMasukkan nama bank Anda:\n<i>Contoh: BCA, Mandiri, BNI, BRI</i>",
-        reply_markup=get_cancel_keyboard(),
+        reply_markup=get_cancel_keyboard("withdraw:back"),
         parse_mode="HTML"
     )
     await callback.answer()
@@ -89,7 +89,7 @@ async def process_bank_name(message: Message, state: FSMContext, **kwargs):
     
     await message.answer(
         f"{Emoji.BANK} <b>Nomor Rekening</b>\n\nMasukkan nomor rekening Anda:",
-        reply_markup=get_cancel_keyboard(),
+        reply_markup=get_cancel_keyboard("withdraw:back"),
         parse_mode="HTML"
     )
 
@@ -101,7 +101,7 @@ async def process_account_number(message: Message, state: FSMContext, **kwargs):
     if not account_number.isdigit():
         await message.answer(
             format_error("Nomor rekening harus berupa angka."),
-            reply_markup=get_cancel_keyboard(),
+            reply_markup=get_cancel_keyboard("withdraw:back"),
             parse_mode="HTML"
         )
         return
@@ -111,7 +111,7 @@ async def process_account_number(message: Message, state: FSMContext, **kwargs):
     
     await message.answer(
         f"{Emoji.USER} <b>Nama Pemilik Rekening</b>\n\nMasukkan nama sesuai buku tabungan:",
-        reply_markup=get_cancel_keyboard(),
+        reply_markup=get_cancel_keyboard("withdraw:back"),
         parse_mode="HTML"
     )
 
@@ -125,7 +125,7 @@ async def process_account_name(message: Message, state: FSMContext, **kwargs):
     
     await message.answer(
         f"{Emoji.MONEY} <b>Jumlah Withdraw</b>\n\nMasukkan jumlah yang ingin ditarik (min Rp {MIN_WITHDRAW:,.0f}):",
-        reply_markup=get_cancel_keyboard(),
+        reply_markup=get_cancel_keyboard("withdraw:back"),
         parse_mode="HTML"
     )
 
@@ -151,7 +151,7 @@ async def select_ewallet_type(callback: CallbackQuery, state: FSMContext, **kwar
     
     await callback.message.edit_text(
         f"{Emoji.PHONE} <b>Nomor {ewallet_type}</b>\n\nMasukkan nomor {ewallet_type} Anda:",
-        reply_markup=get_cancel_keyboard(),
+        reply_markup=get_cancel_keyboard("withdraw:back"),
         parse_mode="HTML"
     )
     await callback.answer()
@@ -166,7 +166,7 @@ async def process_ewallet_number(message: Message, state: FSMContext, **kwargs):
     
     await message.answer(
         f"{Emoji.MONEY} <b>Jumlah Withdraw</b>\n\nMasukkan jumlah yang ingin ditarik (min Rp {MIN_WITHDRAW:,.0f}):",
-        reply_markup=get_cancel_keyboard(),
+        reply_markup=get_cancel_keyboard("withdraw:back"),
         parse_mode="HTML"
     )
 
@@ -178,7 +178,7 @@ async def process_withdraw_amount(message: Message, state: FSMContext, db: Prism
     if not amount or amount < MIN_WITHDRAW:
         await message.answer(
             format_error(f"Jumlah minimal withdraw adalah Rp {MIN_WITHDRAW:,.0f}"),
-            reply_markup=get_cancel_keyboard(),
+            reply_markup=get_cancel_keyboard("withdraw:back"),
             parse_mode="HTML"
         )
         return
@@ -192,7 +192,7 @@ async def process_withdraw_amount(message: Message, state: FSMContext, db: Prism
     if amount > balance:
         await message.answer(
             format_insufficient_balance(amount, balance),
-            reply_markup=get_cancel_keyboard(),
+            reply_markup=get_cancel_keyboard("withdraw:back"),
             parse_mode="HTML"
         )
         return

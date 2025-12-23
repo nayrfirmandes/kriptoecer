@@ -86,7 +86,7 @@ async def select_topup_method(callback: CallbackQuery, state: FSMContext, db: Pr
     
     await callback.message.edit_text(
         format_topup_amount(method.name),
-        reply_markup=get_cancel_keyboard(),
+        reply_markup=get_cancel_keyboard(CallbackData.MENU_TOPUP),
         parse_mode="HTML"
     )
     await callback.answer()
@@ -99,7 +99,7 @@ async def process_topup_amount(message: Message, state: FSMContext, db: Prisma, 
     if not amount or amount < MIN_TOPUP:
         await message.answer(
             format_error(f"Jumlah minimal top up adalah Rp {MIN_TOPUP:,.0f}"),
-            reply_markup=get_cancel_keyboard(),
+            reply_markup=get_cancel_keyboard(CallbackData.MENU_TOPUP),
             parse_mode="HTML"
         )
         return
@@ -176,13 +176,3 @@ async def cancel_topup(callback: CallbackQuery, state: FSMContext, db: Prisma, *
     await callback.answer()
 
 
-@router.callback_query(F.data == CallbackData.CANCEL, TopupStates.entering_amount)
-async def cancel_topup_amount(callback: CallbackQuery, state: FSMContext, **kwargs):
-    await state.clear()
-    
-    await callback.message.edit_text(
-        f"{Emoji.ERROR} Top up dibatalkan.",
-        reply_markup=get_back_keyboard(),
-        parse_mode="HTML"
-    )
-    await callback.answer()

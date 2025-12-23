@@ -146,7 +146,7 @@ async def select_sell_network(callback: CallbackQuery, state: FSMContext, db: Pr
         f"{Emoji.INFO} Termasuk margin {margin}%\n\n"
         f"Masukkan jumlah <b>{coin}</b> yang ingin dijual:\n"
         f"<i>Contoh: 0.001</i>",
-        reply_markup=get_cancel_keyboard(),
+        reply_markup=get_cancel_keyboard("sell:back"),
         parse_mode="HTML"
     )
     await callback.answer()
@@ -159,7 +159,7 @@ async def process_sell_amount(message: Message, state: FSMContext, db: Prisma, u
     if not crypto_amount or crypto_amount <= 0:
         await message.answer(
             format_error("Jumlah tidak valid."),
-            reply_markup=get_cancel_keyboard(),
+            reply_markup=get_cancel_keyboard("sell:back"),
             parse_mode="HTML"
         )
         return
@@ -174,7 +174,7 @@ async def process_sell_amount(message: Message, state: FSMContext, db: Prisma, u
     if fiat_amount < Decimal("10000"):
         await message.answer(
             format_error("Jumlah terlalu kecil. Minimum penjualan senilai Rp 10.000"),
-            reply_markup=get_cancel_keyboard(),
+            reply_markup=get_cancel_keyboard("sell:back"),
             parse_mode="HTML"
         )
         return
@@ -199,7 +199,7 @@ async def process_sell_amount(message: Message, state: FSMContext, db: Prisma, u
         if not result.success:
             await message.answer(
                 format_error(f"Gagal membuat address: {result.error}"),
-                reply_markup=get_cancel_keyboard(),
+                reply_markup=get_cancel_keyboard("sell:back"),
                 parse_mode="HTML"
             )
             return
@@ -243,7 +243,7 @@ async def process_sell_amount(message: Message, state: FSMContext, db: Prisma, u
     except Exception as e:
         await message.answer(
             format_error(f"Terjadi kesalahan: {str(e)}"),
-            reply_markup=get_cancel_keyboard(),
+            reply_markup=get_cancel_keyboard("sell:back"),
             parse_mode="HTML"
         )
     finally:

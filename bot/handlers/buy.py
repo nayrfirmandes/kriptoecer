@@ -152,7 +152,7 @@ async def select_buy_network(callback: CallbackQuery, state: FSMContext, db: Pri
     
     await callback.message.edit_text(
         format_buy_amount(coin, network, rate_idr, margin),
-        reply_markup=get_cancel_keyboard(),
+        reply_markup=get_cancel_keyboard("buy:back"),
         parse_mode="HTML"
     )
     await callback.answer()
@@ -165,7 +165,7 @@ async def process_buy_amount(message: Message, state: FSMContext, db: Prisma, us
     if not amount_idr or amount_idr < Decimal("10000"):
         await message.answer(
             format_error("Jumlah minimal pembelian adalah Rp 10.000"),
-            reply_markup=get_cancel_keyboard(),
+            reply_markup=get_cancel_keyboard("buy:back"),
             parse_mode="HTML"
         )
         return
@@ -186,7 +186,7 @@ async def process_buy_amount(message: Message, state: FSMContext, db: Prisma, us
     if calc.get("error"):
         await message.answer(
             format_error(calc["error"]),
-            reply_markup=get_cancel_keyboard(),
+            reply_markup=get_cancel_keyboard("buy:back"),
             parse_mode="HTML"
         )
         return
@@ -196,7 +196,7 @@ async def process_buy_amount(message: Message, state: FSMContext, db: Prisma, us
     if total_idr > balance:
         await message.answer(
             format_insufficient_balance(total_idr, balance),
-            reply_markup=get_cancel_keyboard(),
+            reply_markup=get_cancel_keyboard("buy:back"),
             parse_mode="HTML"
         )
         return
@@ -212,7 +212,7 @@ async def process_buy_amount(message: Message, state: FSMContext, db: Prisma, us
     await message.answer(
         f"{Emoji.WALLET} <b>Alamat Wallet</b>\n\n"
         f"Masukkan alamat wallet {data['coin']} ({data['network']}) Anda:",
-        reply_markup=get_cancel_keyboard(),
+        reply_markup=get_cancel_keyboard("buy:back"),
         parse_mode="HTML"
     )
 
@@ -224,7 +224,7 @@ async def process_wallet_address(message: Message, state: FSMContext, **kwargs):
     if len(wallet) < 20:
         await message.answer(
             format_error("Alamat wallet tidak valid."),
-            reply_markup=get_cancel_keyboard(),
+            reply_markup=get_cancel_keyboard("buy:back"),
             parse_mode="HTML"
         )
         return
