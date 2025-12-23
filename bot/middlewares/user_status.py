@@ -1,5 +1,5 @@
 from typing import Any, Awaitable, Callable, Dict
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from aiogram import BaseMiddleware
 from aiogram.types import TelegramObject, Message, CallbackQuery
 from prisma import Prisma
@@ -29,9 +29,14 @@ class UserStatusMiddleware(BaseMiddleware):
             user = await db.user.find_unique(where={"telegramId": user_id})
             
             if user:
-                inactive_threshold = datetime.utcnow() - timedelta(days=self.INACTIVE_MONTHS * 30)
+                now = datetime.now(timezone.utc)
+                inactive_threshold = now - timedelta(days=self.INACTIVE_MONTHS * 30)
                 
-                if user.lastActiveAt < inactive_threshold and user.status == "ACTIVE":
+                last_active = user.lastActiveAt
+                if last_active.tzinfo is None:
+                    last_active = last_active.replace(tzinfo=timezone.utc)
+                
+                if last_active < inactive_threshold and user.status == "ACTIVE":
                     await db.user.update(
                         where={"id": user.id},
                         data={"status": "INACTIVE"}
@@ -40,7 +45,7 @@ class UserStatusMiddleware(BaseMiddleware):
                 else:
                     await db.user.update(
                         where={"id": user.id},
-                        data={"lastActiveAt": datetime.utcnow()}
+                        data={"lastActiveAt": now}
                     )
                 
                 data["user"] = user
