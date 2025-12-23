@@ -49,14 +49,21 @@ Dengan menggunakan layanan ini, Anda menyetujui:
 
 
 def format_main_menu(balance: Decimal, name: str) -> str:
-    return """<b>Menu Utama</b> {coin}
+    return """<b>KriptoEcer Bot</b> {coin}
 
-Halo, <b>{name}</b>
-{money} Saldo: <b>{balance}</b>
+Selamat datang, <b>{name}</b>!
 
-Pilih menu di bawah:""".format(
+{money} <b>Saldo Anda</b>
+<code>{balance}</code>
+
+{dot} Beli/Jual crypto dengan harga terbaik
+{dot} Deposit & withdraw cepat dan aman
+{dot} Dapatkan bonus dari program referral
+
+Pilih menu di bawah untuk mulai:""".format(
         coin=Emoji.COIN,
         money=Emoji.MONEY,
+        dot=Emoji.DOT,
         name=name,
         balance=format_currency(balance)
     )
