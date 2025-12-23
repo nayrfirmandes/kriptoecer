@@ -12,6 +12,7 @@ from .history import router as history_router
 from .settings import router as settings_router
 from .admin import router as admin_router
 from .stock import router as stock_router
+from .crypto_deposit import router as crypto_deposit_router
 
 
 def setup_routers() -> Router:
@@ -29,5 +30,6 @@ def setup_routers() -> Router:
     main_router.include_router(settings_router)
     main_router.include_router(admin_router)
     main_router.include_router(stock_router)
+    main_router.include_router(crypto_deposit_router)
     
     return main_router

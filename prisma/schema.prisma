@@ -89,18 +89,19 @@ model Transaction {
 }
 
 model Deposit {
-  id              String            @id @default(cuid())
-  userId          String            @map("user_id")
-  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  amount          Decimal           @db.Decimal(20, 2)
-  paymentMethod   String            @map("payment_method")
-  proofImage      String?           @map("proof_image")
-  status          TransactionStatus @default(PENDING)
-  adminNote       String?           @map("admin_note")
-  approvedById    String?           @map("approved_by_id")
-  approvedBy      Admin?            @relation(fields: [approvedById], references: [id])
-  createdAt       DateTime          @default(now()) @map("created_at")
-  updatedAt       DateTime          @updatedAt @map("updated_at")
+  id                  String            @id @default(cuid())
+  userId              String            @map("user_id")
+  user                User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount              Decimal           @db.Decimal(20, 2)
+  paymentMethod       String            @map("payment_method")
+  proofImage          String?           @map("proof_image")
+  cryptobotInvoiceId  String?           @map("cryptobot_invoice_id")
+  status              TransactionStatus @default(PENDING)
+  adminNote           String?           @map("admin_note")
+  approvedById        String?           @map("approved_by_id")
+  approvedBy          Admin?            @relation(fields: [approvedById], references: [id])
+  createdAt           DateTime          @default(now()) @map("created_at")
+  updatedAt           DateTime          @updatedAt @map("updated_at")
 
   @@map("deposits")
 }

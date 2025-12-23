@@ -24,10 +24,17 @@ class OxaPayConfig:
 
 
 @dataclass
+class CryptoBotConfig:
+    api_token: str
+    margin: float = 0.05
+
+
+@dataclass
 class AppConfig:
     bot: BotConfig
     database: DatabaseConfig
     oxapay: OxaPayConfig
+    cryptobot: CryptoBotConfig
     webhook_host: str
     debug: bool = False
 
@@ -52,6 +59,10 @@ def load_config() -> AppConfig:
             payout_api_key=os.getenv("OXAPAY_PAYOUT_API_KEY", ""),
             webhook_secret=os.getenv("OXAPAY_WEBHOOK_SECRET", ""),
             webhook_url=os.getenv("OXAPAY_WEBHOOK_URL", f"https://{webhook_host}/webhook/oxapay"),
+        ),
+        cryptobot=CryptoBotConfig(
+            api_token=os.getenv("CRYPTOBOT_API_TOKEN", ""),
+            margin=float(os.getenv("CRYPTOBOT_MARGIN", "0.05")),
         ),
         webhook_host=webhook_host,
         debug=os.getenv("DEBUG", "false").lower() == "true",

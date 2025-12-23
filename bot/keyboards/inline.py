@@ -189,8 +189,16 @@ def get_confirm_keyboard(action: str, order_id: str) -> InlineKeyboardMarkup:
     return builder.as_markup()
 
 
-def get_topup_methods_keyboard(methods: list[dict]) -> InlineKeyboardMarkup:
+def get_topup_methods_keyboard(methods: list[dict], show_crypto: bool = True) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
+    
+    if show_crypto:
+        builder.row(
+            InlineKeyboardButton(
+                text="₿ Deposit Crypto",
+                callback_data="topup:method:crypto"
+            )
+        )
     
     for method in methods:
         builder.row(
