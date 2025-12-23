@@ -68,11 +68,7 @@ async def back_to_menu(callback: CallbackQuery, state: FSMContext, db: Prisma, u
     await state.clear()
     
     if not user or user.status != "ACTIVE":
-        try:
-            await callback.message.delete()
-        except Exception:
-            pass
-        await callback.message.answer(
+        await callback.message.edit_text(
             format_welcome(),
             reply_markup=get_terms_keyboard(),
             parse_mode="HTML"
@@ -83,11 +79,7 @@ async def back_to_menu(callback: CallbackQuery, state: FSMContext, db: Prisma, u
     balance = user.balance.amount if user.balance else 0
     name = user.firstName or user.username or "User"
     
-    try:
-        await callback.message.delete()
-    except Exception:
-        pass
-    await callback.message.answer(
+    await callback.message.edit_text(
         format_main_menu(balance, name, callback.from_user.id),
         reply_markup=get_main_menu_keyboard(),
         parse_mode="HTML"

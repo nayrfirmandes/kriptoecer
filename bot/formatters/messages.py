@@ -5,18 +5,6 @@ import random
 
 WIB = timezone(timedelta(hours=7))
 
-FRIENDLY_QUOTES = [
-    "Trading crypto jadi lebih mudah bersama kami!",
-    "Harga terbaik, proses tercepat.",
-    "Transaksi aman, profit maksimal.",
-    "Mulai investasi crypto Anda hari ini!",
-    "Partner terpercaya untuk trading crypto.",
-    "Simple, cepat, dan aman.",
-    "Crypto untuk semua orang.",
-    "Raih peluang di dunia crypto!",
-]
-
-
 def get_wib_greeting() -> str:
     now = datetime.now(WIB)
     hour = now.hour
@@ -39,10 +27,6 @@ def format_wib_datetime(dt: datetime) -> str:
         dt = dt.replace(tzinfo=timezone.utc)
     wib_dt = dt.astimezone(WIB)
     return wib_dt.strftime("%d/%m/%Y %H:%M WIB")
-
-
-def get_random_quote() -> str:
-    return random.choice(FRIENDLY_QUOTES)
 
 
 class Emoji:
@@ -93,17 +77,13 @@ Dengan menggunakan layanan ini, Anda menyetujui:
 
 def format_main_menu(balance: Decimal, name: str, telegram_id: int) -> str:
     greeting = get_wib_greeting()
-    quote = get_random_quote()
     
     return """{greeting}, <b>{name}</b>!
 
-💰 Saldo: <b>{balance}</b>
-
-<i>{quote}</i>""".format(
+💰 Saldo: <b>{balance}</b>""".format(
         greeting=greeting,
         name=name,
-        balance=format_currency(balance),
-        quote=quote
+        balance=format_currency(balance)
     )
 
 
