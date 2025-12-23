@@ -181,7 +181,7 @@ Jangan bagikan PIN kepada siapapun.""",
     )
 
 
-def get_settings_back_keyboard() -> InlineKeyboardMarkup:
+def get_settings_back_keyboard():
     from aiogram.types import InlineKeyboardButton
     from aiogram.utils.keyboard import InlineKeyboardBuilder
     
